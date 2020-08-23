@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -20,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class AddReminder : BottomSheetDialogFragment() {
 
     private lateinit var binding:FragmentAddReminderListDialogBinding
+    private val viewModel: AddReminderViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

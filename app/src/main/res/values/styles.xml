@@ -8,7 +8,9 @@
         <item name="colorOnSurface">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetStyle</item>
+
     </style>
 
     <style name="BottomSheetStyle" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
@@ -17,6 +19,7 @@
         <item name="boxStrokeColor">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
         <item name="textInputStyle">@style/ContactTextInput</item>
 
     </style>
@@ -24,6 +27,7 @@
     <style name="BottomModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_modal_background</item>
     </style>
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton"/>
 
     <style name="ContactTextInput" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxBackgroundColor">@android:color/transparent</item>
