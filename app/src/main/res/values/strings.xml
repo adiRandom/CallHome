@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Call Home</string>
+    <string name="add_a_new_reminder">Add a new reminder</string>
 </resources>
