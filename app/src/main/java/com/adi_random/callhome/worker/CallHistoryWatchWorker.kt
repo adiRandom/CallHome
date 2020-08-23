@@ -23,10 +23,10 @@ class CallHistoryWatchWorker(
             for (reminder in reminders) {
                 GlobalScope.launch {
                     //Get the phone number associated with this reminder
-                    val number = contentRetriever.getContactPhoneNumber(reminder.getId())
+                    val contact = contentRetriever.getContact(reminder.getId())
 
                     //Get the date of the last placed call to that number
-                    val date = contentRetriever.getLastCallDate(number)
+                    val date = contentRetriever.getLastCallDate(contact)
                     if (date > reminder.nextCallDate) {
 //                                                TODO: Notify user
                     } else if (date == reminder.nextCallDate) {

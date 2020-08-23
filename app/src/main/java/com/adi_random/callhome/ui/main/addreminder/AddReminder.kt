@@ -1,7 +1,6 @@
 package com.adi_random.callhome.ui.main.addreminder
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  */
 class AddReminder : BottomSheetDialogFragment() {
 
-    private lateinit var binding:FragmentAddReminderListDialogBinding
+    private lateinit var binding: FragmentAddReminderListDialogBinding
     private val viewModel: AddReminderViewModel by viewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Void>
 
@@ -34,12 +33,17 @@ class AddReminder : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
 //        binding = FragmentAddReminderListDialogBinding.inflate(inflater,container,false)
-        binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_add_reminder_list_dialog,container,false)
+        binding = DataBindingUtil.inflate(
+            layoutInflater,
+            R.layout.fragment_add_reminder_list_dialog,
+            container,
+            false
+        )
         binding.viewModel = viewModel
 
         //Bind contact picker icon to callback
 
-        binding.contactPickerLayout.setEndIconOnClickListener{
+        binding.contactPickerLayout.setEndIconOnClickListener {
             activityResultLauncher.launch(null)
         }
 
@@ -49,13 +53,19 @@ class AddReminder : BottomSheetDialogFragment() {
             dismiss()
         }
 
+        //Subscribe to contact livedata on viewmodel
+
+        viewModel.getContact().observe(viewLifecycleOwner){
+            binding.viewModel = viewModel
+        }
+
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityResultLauncher = registerForActivityResult(ActivityResultContracts.PickContact()){
-            Log.d("Pick contact",it.toString())
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.PickContact()) {
+            viewModel.setContact(it)
         }
     }
 

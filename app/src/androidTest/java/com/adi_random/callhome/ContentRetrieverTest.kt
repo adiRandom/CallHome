@@ -3,6 +3,7 @@ package com.adi_random.callhome
 import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.adi_random.callhome.content.ContentRetriever
+import com.adi_random.callhome.model.Contact
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -23,9 +24,9 @@ class ContentRetrieverTest {
     @Test
     fun retrieveThePhoneNumberOfAContact() = runBlockingTest  {
         val ids = contentRetriever.getAllContactsIds()
-        val numbers = emptyList<String>().toMutableList()
+        val numbers = emptyList<Contact>().toMutableList()
         for(id in ids){
-            numbers+=contentRetriever.getContactPhoneNumber(id)
+            numbers+=contentRetriever.getContact(id)
         }
         MatcherAssert.assertThat(ids, Matchers.hasSize(1))
     }

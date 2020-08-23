@@ -1,23 +1,30 @@
 package com.adi_random.callhome.ui.main.addreminder
 
+import android.app.Application
+import android.net.Uri
 import android.view.View
 import android.widget.RadioButton
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.adi_random.callhome.R
+import com.adi_random.callhome.content.ContentRetriever
 import com.adi_random.callhome.model.Contact
+import com.adi_random.callhome.model.EMPTY_CONTACT
+import kotlinx.coroutines.launch
 
 
 /**
  * Created by Adrian Pascu on 23-Aug-20
  */
-class AddReminderViewModel : ViewModel() {
-    private val contact: MutableLiveData<Contact> by lazy {
-        MutableLiveData<Contact>()
+class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
+    private val contentRetriever = ContentRetriever(app.applicationContext)
+    private val _contact: MutableLiveData<Contact> by lazy {
+        MutableLiveData<Contact>(EMPTY_CONTACT)
     }
 
-    fun getContact(): LiveData<Contact> = contact
+    fun getContact(): LiveData<Contact> = _contact
 
     private val timesToRemind: MutableLiveData<List<String>> by lazy {
         MutableLiveData<List<String>>()
@@ -34,6 +41,14 @@ class AddReminderViewModel : ViewModel() {
     }
 
     fun getReminderType(): LiveData<ReminderType> = reminderType
+
+    fun setContact(uri: Uri) {
+        viewModelScope.launch {
+            val id = contentRetriever.getContactIdFromUri(uri)
+            val contact = contentRetriever.getContact(id)
+            _contact.postValue(contact)
+        }
+    }
 
     fun onRadioClicked(view: View) {
         (view as RadioButton).apply {

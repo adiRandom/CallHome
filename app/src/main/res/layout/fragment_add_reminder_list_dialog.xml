@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             app:endIconContentDescription="Pick a contact"
             app:endIconDrawable="@drawable/ic_baseline_contacts_24"
-            app:endIconMode="custom">
+            app:endIconMode="custom"
+            app:placeholderText="Pick a contact">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/contact_picker"
@@ -44,7 +45,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="18dp"
-                android:clickable="false" />
+                android:clickable="false"
+                android:text="@{viewModel.contact.name}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <RadioGroup
