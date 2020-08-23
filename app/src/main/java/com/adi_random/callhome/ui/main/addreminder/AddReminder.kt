@@ -1,10 +1,15 @@
 package com.adi_random.callhome.ui.main.addreminder
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -22,13 +27,36 @@ class AddReminder : BottomSheetDialogFragment() {
 
     private lateinit var binding:FragmentAddReminderListDialogBinding
     private val viewModel: AddReminderViewModel by viewModels()
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Void>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAddReminderListDialogBinding.inflate(inflater,container,false)
+//        binding = FragmentAddReminderListDialogBinding.inflate(inflater,container,false)
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_add_reminder_list_dialog,container,false)
+        binding.viewModel = viewModel
+
+        //Bind contact picker icon to callback
+
+        binding.contactPickerLayout.setEndIconOnClickListener{
+            activityResultLauncher.launch(null)
+        }
+
+        //Bind the cancel button
+
+        binding.cancelButton.setOnClickListener {
+            dismiss()
+        }
+
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.PickContact()){
+            Log.d("Pick contact",it.toString())
+        }
     }
 
     companion object {
