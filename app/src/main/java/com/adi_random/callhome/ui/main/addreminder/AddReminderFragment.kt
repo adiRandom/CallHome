@@ -1,6 +1,7 @@
 package com.adi_random.callhome.ui.main.addreminder
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.fragment.app.viewModels
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import org.jetbrains.annotations.TestOnly
 
 
 /**
@@ -22,11 +24,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  *    AddReminder.newInstance(30).show(supportFragmentManager, "dialog")
  * </pre>
  */
-class AddReminder : BottomSheetDialogFragment() {
+class AddReminderFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentAddReminderListDialogBinding
     private val viewModel: AddReminderViewModel by viewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Void>
+
+    @TestOnly
+    fun _getViewModel() = viewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,10 +58,26 @@ class AddReminder : BottomSheetDialogFragment() {
             dismiss()
         }
 
+        //Bind the add time button
+        binding.addTimeButton.setOnClickListener {
+            TimePopupFragment.newInstance(viewModel.getReminderType().value!!).show(
+                parentFragmentManager,
+                TIME_PICKER_TAG
+            )
+        }
+
         //Subscribe to contact livedata on viewmodel
 
-        viewModel.getContact().observe(viewLifecycleOwner){
+        viewModel.getContact().observe(viewLifecycleOwner) {
             binding.viewModel = viewModel
+        }
+
+        //Subscribe to timesToRemind list
+
+        viewModel.timesToRemind.observe(viewLifecycleOwner) {
+//            TODO: Bind to recycler view
+            if (it.size > 0)
+                Log.d("New time", it[0])
         }
 
         return binding.root
@@ -71,7 +92,17 @@ class AddReminder : BottomSheetDialogFragment() {
 
     companion object {
 
-        fun newInstance(): AddReminder =
-            AddReminder()
+        const val TIME_PICKER_TAG = "time_picker_tag"
+
+        fun newInstance(): AddReminderFragment =
+            AddReminderFragment()
+    }
+
+    fun onTimePicked(hour: Int, minute: Int) {
+        viewModel.addTimeToRemind(hour, minute)
+    }
+
+    fun onDayPicked(day: Int) {
+        viewModel.addTimeToRemind(day)
     }
 }

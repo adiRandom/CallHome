@@ -40,8 +40,8 @@ android {
         applicationId "com.adi_random.callhome"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -114,8 +114,8 @@ dependencies {
 
     // Espresso
     def androidx_espresso_core = "3.2.0"
-    testImplementation "androidx.test.espresso:espresso-core:$androidx_espresso_core"
-    testImplementation "androidx.test.espresso:espresso-contrib:$androidx_espresso_core"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_espresso_core"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$androidx_espresso_core"
 
     def androidx_espresso_idling_resource = "3.2.0"
     testImplementation "androidx.test.espresso:espresso-idling-resource:$androidx_espresso_idling_resource"

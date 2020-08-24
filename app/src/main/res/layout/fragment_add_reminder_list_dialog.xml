@@ -16,15 +16,17 @@
         android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet_modal_background"
         android:orientation="vertical"
+        android:paddingLeft="8dp"
         android:theme="@style/BottomSheetStyle">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/fanwood_text"
+            android:hint="Pick a contact"
             android:text="@string/add_a_new_reminder"
             android:textColor="@color/colorPrimary"
             android:textSize="24sp"
@@ -43,17 +45,15 @@
                 android:id="@+id/contact_picker"
                 android:layout_width="272dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="18dp"
-                android:clickable="false"
-                android:text="@{viewModel.contact.name}" />
+                android:enabled="false"
+                android:hint="Pick a contact" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <RadioGroup
             android:id="@+id/frequency_picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="16dp"
             android:checkedButton="@id/weekly"
             android:orientation="horizontal">
@@ -82,8 +82,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,7 +118,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Cancel" />
+                android:text="Cancel"
+                android:textColor="#404040" />
 
             <Button
                 android:id="@+id/save_button"
