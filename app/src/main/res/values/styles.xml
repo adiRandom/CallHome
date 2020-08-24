@@ -27,11 +27,16 @@
     <style name="BottomModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_modal_background</item>
     </style>
-    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton"/>
+
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton" />
 
     <style name="ContactTextInput" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="boxStrokeColor">@color/contact_input_color</item>
+    </style>
+
+    <style name="DropdownItemStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <item name="android:minWidth">300dp</item>
     </style>
 
 </resources>
