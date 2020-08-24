@@ -17,13 +17,14 @@
         android:background="@drawable/bottom_sheet_modal_background"
         android:orientation="vertical"
         android:paddingLeft="8dp"
+        android:paddingBottom="8dp"
         android:theme="@style/BottomSheetStyle">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/fanwood_text"
             android:hint="Pick a contact"
@@ -90,6 +91,8 @@
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="16dp"
+                    android:id="@+id/times_to_remind"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

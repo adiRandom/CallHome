@@ -1,7 +1,6 @@
 package com.adi_random.callhome.ui.main.addreminder
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -72,12 +72,10 @@ class AddReminderFragment : BottomSheetDialogFragment() {
             binding.viewModel = viewModel
         }
 
-        //Subscribe to timesToRemind list
-
-        viewModel.timesToRemind.observe(viewLifecycleOwner) {
-//            TODO: Bind to recycler view
-            if (it.size > 0)
-                Log.d("New time", it[0])
+        //Bind to recyclerview
+        binding.timesToRemind.apply {
+            adapter = viewModel.timesToRemindAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
 
         return binding.root
