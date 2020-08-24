@@ -19,14 +19,14 @@
 
         <Spinner
             android:id="@+id/day_picker"
-            style="@style/Platform.Widget.AppCompat.Spinner"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:entries="@{type == ReminderType.WEEKLY ? @stringArray/week_days_array : @stringArray/month_days_array}"
             android:minWidth="100dp"
-            android:popupBackground="@color/cardview_light_background"
+            android:popupBackground="#FFFFFF"
             android:spinnerMode="dropdown"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
