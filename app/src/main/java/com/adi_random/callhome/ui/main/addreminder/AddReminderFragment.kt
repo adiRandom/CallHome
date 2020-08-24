@@ -78,6 +78,11 @@ class AddReminderFragment : BottomSheetDialogFragment() {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
+        //Listen to radio checked changed
+        binding.frequencyPicker.setOnCheckedChangeListener { _, id ->
+            viewModel.onRadioCheckedChanged(id)
+        }
+
         return binding.root
     }
 

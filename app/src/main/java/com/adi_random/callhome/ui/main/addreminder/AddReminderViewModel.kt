@@ -2,8 +2,6 @@ package com.adi_random.callhome.ui.main.addreminder
 
 import android.app.Application
 import android.net.Uri
-import android.view.View
-import android.widget.RadioButton
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -80,32 +78,29 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun onRadioClicked(view: View) {
-        (view as RadioButton).apply {
-            when (id) {
-                R.id.daily -> if (isChecked) {
-                    reminderType.postValue(ReminderType.DAILY)
-//                    Empty the list of times
-                    timesToRemind.clear()
-                    timesToRemindAdapter.notifyDataSetChanged()
-                }
-                R.id.weekly -> if (isChecked) {
-                    reminderType.postValue(ReminderType.WEEKLY)
-//                    Empty the list of times
-                    timesToRemind.clear()
-                    timesToRemindAdapter.notifyDataSetChanged()
-                }
-                R.id.monthly -> if (isChecked) {
-                    reminderType.postValue(ReminderType.MONTHLY)
-//                    Empty the list of times
-                    timesToRemind.clear()
-                    timesToRemindAdapter.notifyDataSetChanged()
-                }
-            }
+    fun onRadioCheckedChanged(id: Int) {
+        when (id) {
+            R.id.daily ->
+                reminderType.value = ReminderType.DAILY
+
+            R.id.weekly ->
+                reminderType.value = ReminderType.WEEKLY
+
+            R.id.monthly ->
+                reminderType.value = ReminderType.MONTHLY
+        }
+
+        //Empty the list
+        timesToRemind.clear()
+        //Update the adapter
+        timesToRemindAdapter.apply {
+            data = timesToRemind
+            type = getReminderType().value!!
+            notifyDataSetChanged()
         }
     }
 
-    val timesToRemindAdapter =
-        TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY)
+val timesToRemindAdapter =
+    TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY)
 
 }

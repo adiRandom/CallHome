@@ -9,7 +9,7 @@ import com.adi_random.callhome.databinding.TimeToRemindItemBinding
 /**
  * Created by Adrian Pascu on 24-Aug-20
  */
-class TimesToRemindAdapter(private val data: List<String>,private val type:ReminderType) :
+class TimesToRemindAdapter( var data: List<String>, var type:ReminderType) :
     RecyclerView.Adapter<TimesToRemindViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimesToRemindViewHolder {
         val inflater = LayoutInflater.from(parent.context)

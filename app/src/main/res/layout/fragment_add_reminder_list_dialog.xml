@@ -63,21 +63,18 @@
                 android:id="@+id/daily"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="@{(view)->viewModel.onRadioClicked(view)}"
                 android:text="Daily" />
 
             <RadioButton
                 android:id="@+id/weekly"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="@{(view)->viewModel.onRadioClicked(view)}"
                 android:text="Weekly" />
 
             <RadioButton
                 android:id="@+id/monthly"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="@{(view)->viewModel.onRadioClicked(view)}"
                 android:text="Monthly" />
         </RadioGroup>
 
