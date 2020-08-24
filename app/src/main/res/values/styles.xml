@@ -33,6 +33,7 @@
     <style name="ContactTextInput" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="boxStrokeColor">@color/contact_input_color</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="DropdownItemStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">

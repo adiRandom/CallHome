@@ -48,7 +48,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:enabled="false"
-                android:hint="Pick a contact" />
+                android:hint="Pick a contact"
+                android:text="@{viewModel.contact.name}"
+                android:textColor="@color/contact_input_text_color"
+                android:textSize="18sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <RadioGroup
