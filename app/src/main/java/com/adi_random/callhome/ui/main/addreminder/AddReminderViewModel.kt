@@ -40,12 +40,17 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getContact(): LiveData<Contact> = _contact
 
-    private val timesToRemind: MutableList<String> = emptyList<String>().toMutableList()
-    fun getTimesToRemind(): List<String> = timesToRemind
+    private val timesToRemind: MutableList<Int> = emptyList<Int>().toMutableList()
+    fun getTimesToRemind(): List<Int> = timesToRemind
 
     fun addTimeToRemind(hour: Int, min: Int) {
-        timesToRemind.add("${hour}:${min}")
-        timesToRemindAdapter.notifyItemInserted(timesToRemind.size - 1)
+        val value = "${hour}${min}".toInt()
+        if (!timesToRemind.contains(value)) {
+            timesToRemind.add(value)
+            timesToRemind.sort()
+            val pos = timesToRemind.indexOf(value)
+            timesToRemindAdapter.notifyItemInserted(pos)
+        }
     }
 
 
@@ -54,8 +59,12 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
      *       1-31 for day of the month
      */
     fun addTimeToRemind(day: Int) {
-        timesToRemind.add(day.toString())
-        timesToRemindAdapter.notifyItemInserted(timesToRemind.size - 1)
+        if (!timesToRemind.contains(day)) {
+            timesToRemind.add(day)
+            timesToRemind.sort()
+            val pos = timesToRemind.indexOf(day)
+            timesToRemindAdapter.notifyItemInserted(pos)
+        }
     }
 
     fun removeTimeToRemind(pos: Int) {
@@ -100,7 +109,13 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-val timesToRemindAdapter =
-    TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY)
-
+    var timesToRemindAdapter =
+        TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY)
+//
+    fun clear() {
+        reminderType.postValue(ReminderType.WEEKLY)
+        _contact.value = EMPTY_CONTACT
+        timesToRemind.clear()
+        timesToRemindAdapter = TimesToRemindAdapter(emptyList(), ReminderType.WEEKLY)
+    }
 }

@@ -13,7 +13,7 @@ import com.adi_random.callhome.databinding.TimeToRemindItemBinding
 
 class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding, type: ReminderType) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(value: String,type:ReminderType) {
+    fun bind(value: Int, type: ReminderType) {
         binding.value = value
         binding.type = type
         binding.executePendingBindings()
@@ -22,31 +22,31 @@ class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding, type
     companion object {
         @JvmStatic
         @BindingAdapter("android:text", "app:type")
-        fun setItemText(view: TextView, text: String, type: ReminderType) {
+        fun setItemText(view: TextView, text: Int, type: ReminderType) {
             val value = when (type) {
-                ReminderType.DAILY -> "At $text every day"
+                ReminderType.DAILY -> "At ${text / 100}:${text % 100} every day"
                 ReminderType.WEEKLY -> {
                     val day: String = when (text) {
-                        "1" -> "Monday"
-                        "2" -> "Tuesday"
-                        "3" -> "Wednesday"
-                        "4" -> "Thursday"
-                        "5" -> "Friday"
-                        "6" -> "Saturday"
-                        "7" -> "Sunday"
+                        1 -> "Monday"
+                        2 -> "Tuesday"
+                        3 -> "Wednesday"
+                        4 -> "Thursday"
+                        5 -> "Friday"
+                        6 -> "Saturday"
+                        7 -> "Sunday"
                         else -> ""
                     }
                     "Every $day"
                 }
                 ReminderType.MONTHLY -> {
                     val day = when (text) {
-                        "1" -> "1st"
-                        "2" -> "2nd"
-                        "3" -> "3rd"
-                        "21" -> "21st"
-                        "22" -> "22nd"
-                        "23" -> "23rd"
-                        "31" -> "31st"
+                        1 -> "1st"
+                        2 -> "2nd"
+                        3 -> "3rd"
+                        21 -> "21st"
+                        22 -> "22nd"
+                        23 -> "23rd"
+                        31 -> "31st"
                         else -> "${text}th"
                     }
                     "The $day of every month"

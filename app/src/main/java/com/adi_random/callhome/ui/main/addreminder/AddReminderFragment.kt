@@ -1,5 +1,6 @@
 package com.adi_random.callhome.ui.main.addreminder
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -93,6 +94,17 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+//        Clear the viewmodel
+        viewModel.clear()
+        viewModelStore.clear()
+
+        super.onDismiss(dialog)
+//        Unsubscribe from observer
+        viewModel.getContact().removeObservers(viewLifecycleOwner)
+
+    }
+
     companion object {
 
         const val TIME_PICKER_TAG = "time_picker_tag"
@@ -101,11 +113,14 @@ class AddReminderFragment : BottomSheetDialogFragment() {
             AddReminderFragment()
     }
 
+    //Callback for picking time to remind
     fun onTimePicked(hour: Int, minute: Int) {
         viewModel.addTimeToRemind(hour, minute)
     }
 
+    //Callback for picking time to remind
     fun onDayPicked(day: Int) {
         viewModel.addTimeToRemind(day)
     }
+
 }

@@ -5,7 +5,7 @@
         <import type="com.adi_random.callhome.ui.main.addreminder.ReminderType"/>
         <variable
             name="value"
-            type="String" />
+            type="int" />
         <variable
             name="type"
             type="ReminderType" />
