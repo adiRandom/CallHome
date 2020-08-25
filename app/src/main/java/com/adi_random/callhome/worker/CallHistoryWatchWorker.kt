@@ -7,6 +7,7 @@ import com.adi_random.callhome.content.ContentRetriever
 import com.adi_random.callhome.model.Reminder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 /**
  * Created by CallHistoryWatchWorker on 17-Aug-20
@@ -23,19 +24,42 @@ class CallHistoryWatchWorker(
             for (reminder in reminders) {
                 GlobalScope.launch {
                     //Get the phone number associated with this reminder
-                    val contact = contentRetriever.getContact(reminder.getId())
 
                     //Get the date of the last placed call to that number
-                    val date = contentRetriever.getLastCallDate(contact)
-                    if (date > reminder.nextCallDate) {
-//                                                TODO: Notify user
-                    } else if (date == reminder.nextCallDate) {
-//                                                TODO: Notify user
-                    } else {
-                        reminder.madeCall(date)
-                    }
-                }
+                    val date = contentRetriever.getLastCallDate(reminder.contact)
 
+
+                    for (remindTime in reminder.timesToRemind) {
+                        launch {
+                            val nextCallDate =
+                                remindTime.calculateNextExecution(appCtx, reminder.lastCallDate)
+                            if (date >= nextCallDate) {
+                                //                    Next call was made
+                                reminder.madeCall(date)
+
+                            } else if (Date() >= nextCallDate) {
+                                val calendar = Calendar.getInstance()
+//                        Get what day is today
+                                val today = calendar.get(Calendar.DAY_OF_MONTH)
+
+                                //Get the day the next call should be placed
+                                calendar.time = nextCallDate
+                                val nextCallDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+                                if (today == nextCallDay) {
+                                    //The next call should be placed
+//                            TODO: Notify user to place call
+                                } else {
+                                    //The next call was missed
+//                            TODO: Notify user they missed to place a call
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
             }
 
         return Result.success()
