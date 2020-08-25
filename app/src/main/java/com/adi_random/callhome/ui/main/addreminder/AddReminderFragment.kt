@@ -1,6 +1,5 @@
 package com.adi_random.callhome.ui.main.addreminder
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,10 +66,21 @@ class AddReminderFragment : BottomSheetDialogFragment() {
 
         //Bind the add time button
         binding.addTimeButton.setOnClickListener {
-            TimePopupFragment.newInstance(viewModel.getReminderType().value!!).show(
-                parentFragmentManager,
-                TIME_PICKER_TAG
-            )
+            TimePopupFragment.newInstance(viewModel.getReminderType().value!!)
+                .setCallback(object : ITimePipupCallback {
+                    override fun onTimePicked(hour: Int, minute: Int) {
+                        viewModel.addTimeToRemind(hour, minute)
+                    }
+
+                    override fun onDayPicked(day: Int) {
+                        viewModel.addTimeToRemind(day)
+                    }
+
+                })
+                .show(
+                    parentFragmentManager,
+                    TIME_PICKER_TAG
+                )
         }
 
         //Subscribe to contact livedata on viewmodel
@@ -101,16 +111,6 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-//        Clear the viewmodel
-        viewModel.clear()
-        viewModelStore.clear()
-
-        super.onDismiss(dialog)
-//        Unsubscribe from observer
-        viewModel.getContact().removeObservers(viewLifecycleOwner)
-
-    }
 
     companion object {
 
@@ -118,16 +118,6 @@ class AddReminderFragment : BottomSheetDialogFragment() {
 
         fun newInstance(): AddReminderFragment =
             AddReminderFragment()
-    }
-
-    //Callback for picking time to remind
-    fun onTimePicked(hour: Int, minute: Int) {
-        viewModel.addTimeToRemind(hour, minute)
-    }
-
-    //Callback for picking time to remind
-    fun onDayPicked(day: Int) {
-        viewModel.addTimeToRemind(day)
     }
 
 }

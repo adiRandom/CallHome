@@ -5,9 +5,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.adi_random.callhome.databinding.MainActivityBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
-import com.adi_random.callhome.ui.main.addreminder.ITimePipupCallback
 
-class MainActivity : AppCompatActivity(),ITimePipupCallback {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         const val AddReminderModalTag = "add_reminder_modal"
@@ -20,21 +19,13 @@ class MainActivity : AppCompatActivity(),ITimePipupCallback {
         super.onCreate(savedInstanceState)
         binding = MainActivityBinding.inflate(layoutInflater)
         binding.showModalHandler = this
-        modal = AddReminderFragment.newInstance()
         setContentView(binding.root)
 
     }
 
     fun showAddReminderModal(view: View) {
-        modal.show(supportFragmentManager, AddReminderModalTag)
+        AddReminderFragment.newInstance().show(supportFragmentManager, AddReminderModalTag)
     }
 
-//    Callback for time picker dialog
-    override fun onTimePicked(hour: Int, minute: Int) {
-        modal.onTimePicked(hour, minute)
-    }
-    //    Callback for time picker dialog
-    override fun onDayPicked(day: Int) {
-        modal.onDayPicked(day)
-    }
+
 }

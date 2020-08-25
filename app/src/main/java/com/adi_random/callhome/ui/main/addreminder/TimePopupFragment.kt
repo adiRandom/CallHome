@@ -3,7 +3,6 @@ package com.adi_random.callhome.ui.main.addreminder
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +24,9 @@ class TimePopupFragment : DialogFragment() {
         type = ReminderType.getReminderTypeFromInt(requireArguments().getInt(ARG_TYPE))
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callback = (context as ITimePipupCallback)
+    fun setCallback(callback: ITimePipupCallback):TimePopupFragment{
+        this.callback = callback
+        return this
     }
 
     override fun onCreateView(
@@ -79,7 +78,6 @@ class TimePopupFragment : DialogFragment() {
          * @param type The type of dialog.
          * @return A new instance of fragment TimePopup.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(type: ReminderType) =
             TimePopupFragment().apply {
