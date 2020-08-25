@@ -14,20 +14,20 @@ import com.adi_random.callhome.databinding.TimeToRemindItemBinding
 class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-   inner class ViewModel(
+    inner class ViewModel(
         var value: Int,
         var type: ReminderType,
         var _onDelete: () -> Unit
     ) {
 
-        fun onDelete(){
+        fun onDelete() {
             _onDelete()
         }
 
     }
 
     fun bind(value: Int, type: ReminderType, onDelete: (pos: Int) -> Unit) {
-        binding.viewModel = ViewModel(value, type){
+        binding.viewModel = ViewModel(value, type) {
             onDelete(adapterPosition)
         }
 
@@ -39,7 +39,11 @@ class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding) :
         @BindingAdapter("android:text", "app:type")
         fun setItemText(view: TextView, text: Int, type: ReminderType) {
             val value = when (type) {
-                ReminderType.DAILY -> "At ${text / 100}:${text % 100} every day"
+                ReminderType.DAILY -> {
+                    val hour = if (text / 100 < 10) "0${text / 100}"; else text / 100
+                    val minute = if (text % 100 < 10) "0${text % 100}"; else text % 100
+                    "At $hour:$minute every day"
+                }
                 ReminderType.WEEKLY -> {
                     val day: String = when (text) {
                         1 -> "Monday"

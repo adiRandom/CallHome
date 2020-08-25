@@ -10,6 +10,7 @@ import com.adi_random.callhome.R
 import com.adi_random.callhome.content.ContentRetriever
 import com.adi_random.callhome.model.Contact
 import com.adi_random.callhome.model.EMPTY_CONTACT
+import com.adi_random.callhome.model.ReminderBuilder
 import kotlinx.coroutines.launch
 
 
@@ -32,7 +33,7 @@ enum class ReminderType(val value: Int) {
     }
 }
 
-class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
+class AddReminderViewModel(val app: Application) : AndroidViewModel(app) {
     private val contentRetriever = ContentRetriever(app.applicationContext)
     private val _contact: MutableLiveData<Contact> by lazy {
         MutableLiveData<Contact>(EMPTY_CONTACT)
@@ -43,7 +44,8 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
     private val timesToRemind: MutableList<Int> = emptyList<Int>().toMutableList()
     fun getTimesToRemind(): List<Int> = timesToRemind
 
-    fun addTimeToRemind(hour: Int, min: Int) {
+    fun addTimeToRemind(hour: Int, _min: Int) {
+        val min = if (_min < 10) "0${_min}"; else _min
         val value = "${hour}${min}".toInt()
         if (!timesToRemind.contains(value)) {
             timesToRemind.add(value)
@@ -110,12 +112,29 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     var timesToRemindAdapter =
-        TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY,this::removeTimeToRemind)
-//
+        TimesToRemindAdapter(
+            timesToRemind,
+            reminderType.value ?: ReminderType.WEEKLY,
+            this::removeTimeToRemind
+        )
+
+    //
     fun clear() {
         reminderType.postValue(ReminderType.WEEKLY)
         _contact.value = EMPTY_CONTACT
         timesToRemind.clear()
-        timesToRemindAdapter = TimesToRemindAdapter(emptyList(), ReminderType.WEEKLY,this::removeTimeToRemind)
+        timesToRemindAdapter =
+            TimesToRemindAdapter(emptyList(), ReminderType.WEEKLY, this::removeTimeToRemind)
+    }
+
+    fun createReminder() {
+        viewModelScope.launch {
+            val reminder = ReminderBuilder(app.applicationContext)
+                .withReminderType(reminderType.value)
+                .withContact(_contact.value)
+                .withTimesToRemind(timesToRemind)
+                .build()
+//            TODO: Save it to databas
+        }
     }
 }

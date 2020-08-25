@@ -7,6 +7,7 @@ import com.cronutils.model.Cron
 import com.cronutils.model.CronType
 import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.model.field.expression.FieldExpression.always
+import com.cronutils.model.field.expression.FieldExpression.questionMark
 import com.cronutils.model.field.expression.FieldExpressionFactory.on
 import com.cronutils.model.time.ExecutionTime
 import java.time.Instant
@@ -29,7 +30,7 @@ class RemindTime(
                 .withYear(always())
                 .withDoM(always())
                 .withMonth(always())
-                .withDoW(always())
+                .withDoW(questionMark())
                 .withHour(on(timeToRemind / 100))
                 .withMinute(on(timeToRemind % 100))
                 .withSecond(on(0))
@@ -38,7 +39,7 @@ class RemindTime(
         ReminderType.WEEKLY -> {
             CronBuilder.cron(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ))
                 .withYear(always())
-                .withDoM(always())
+                .withDoM(questionMark())
                 .withMonth(always())
 //                        Cron is 0-6
                 .withDoW(on(timeToRemind - 1))
@@ -54,7 +55,7 @@ class RemindTime(
                 //                        TODO: Fetch hour and minute from settings
                 .withDoM(on(timeToRemind))
                 .withMonth(always())
-                .withDoW(always())
+                .withDoW(questionMark())
                 .withHour(on(0))
                 .withMinute(on(0))
                 .withSecond(on(0))

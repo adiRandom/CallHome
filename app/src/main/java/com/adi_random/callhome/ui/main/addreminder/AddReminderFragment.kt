@@ -59,6 +59,12 @@ class AddReminderFragment : BottomSheetDialogFragment() {
             dismiss()
         }
 
+        //Bind the save button
+        binding.saveButton.setOnClickListener {
+            viewModel.createReminder()
+            dismiss()
+        }
+
         //Bind the add time button
         binding.addTimeButton.setOnClickListener {
             TimePopupFragment.newInstance(viewModel.getReminderType().value!!).show(
@@ -90,7 +96,8 @@ class AddReminderFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.PickContact()) {
-            viewModel.setContact(it)
+            if (it != null)
+                viewModel.setContact(it)
         }
     }
 

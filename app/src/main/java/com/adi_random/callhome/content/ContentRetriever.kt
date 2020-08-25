@@ -79,7 +79,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 
 
         //Get the call history for this number
-        val logUri = CallLog.CONTENT_URI
+        val logUri = CallLog.Calls.CONTENT_URI
         val logProjection = arrayOf(
             CallLog.Calls.DATE,
             CallLog.Calls.TYPE,
@@ -113,8 +113,9 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                     val dateIndex =
                         logCursor.getColumnIndex(CallLog.Calls.DATE)
                     logCursor.moveToNext()
+                    val time=  logCursor.getLong(dateIndex)
                     logCursor.close()
-                    return@withContext Date(logCursor.getLong(dateIndex))
+                    return@withContext Date(time)
                 }
 
             }
@@ -133,16 +134,13 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         try {
             when (cursor?.count) {
                 null -> {
-                    println("Null")
                     cursor?.close(); emptyList<Long>()
 
                 }
                 0 -> {
-                    println("Got nothing")
                     cursor.close(); emptyList<Long>()
                 }
                 else -> {
-                    println("Got something")
                     cursor.let {
                         val index =
                             cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)
@@ -177,7 +175,6 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                     cursor.close(); 0L
                 }
                 else -> {
-                    println("Got something")
                     cursor.let {
                         val index =
                             cursor.getColumnIndex(
