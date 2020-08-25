@@ -68,8 +68,8 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun removeTimeToRemind(pos: Int) {
-        timesToRemind.removeAt(pos)
         timesToRemindAdapter.notifyItemRemoved(pos)
+        timesToRemind.removeAt(pos)
     }
 
 
@@ -110,12 +110,12 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     var timesToRemindAdapter =
-        TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY)
+        TimesToRemindAdapter(timesToRemind, reminderType.value ?: ReminderType.WEEKLY,this::removeTimeToRemind)
 //
     fun clear() {
         reminderType.postValue(ReminderType.WEEKLY)
         _contact.value = EMPTY_CONTACT
         timesToRemind.clear()
-        timesToRemindAdapter = TimesToRemindAdapter(emptyList(), ReminderType.WEEKLY)
+        timesToRemindAdapter = TimesToRemindAdapter(emptyList(), ReminderType.WEEKLY,this::removeTimeToRemind)
     }
 }

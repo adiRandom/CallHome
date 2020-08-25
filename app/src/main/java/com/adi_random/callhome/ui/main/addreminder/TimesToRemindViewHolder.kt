@@ -11,11 +11,26 @@ import com.adi_random.callhome.databinding.TimeToRemindItemBinding
  */
 
 
-class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding, type: ReminderType) :
+class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(value: Int, type: ReminderType) {
-        binding.value = value
-        binding.type = type
+
+   inner class ViewModel(
+        var value: Int,
+        var type: ReminderType,
+        var _onDelete: () -> Unit
+    ) {
+
+        fun onDelete(){
+            _onDelete()
+        }
+
+    }
+
+    fun bind(value: Int, type: ReminderType, onDelete: (pos: Int) -> Unit) {
+        binding.viewModel = ViewModel(value, type){
+            onDelete(adapterPosition)
+        }
+
         binding.executePendingBindings()
     }
 

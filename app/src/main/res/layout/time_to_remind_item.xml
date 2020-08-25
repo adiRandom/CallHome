@@ -2,13 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <import type="com.adi_random.callhome.ui.main.addreminder.ReminderType"/>
+        <import type="com.adi_random.callhome.ui.main.addreminder.TimesToRemindViewHolder.ViewModel"/>
         <variable
-            name="value"
-            type="int" />
-        <variable
-            name="type"
-            type="ReminderType" />
+            name="viewModel"
+            type="ViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,13 +19,26 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{value}"
-            app:type="@{type}"
+            android:text="@{viewModel.value}"
+            app:type="@{viewModel.type}"
             android:textColor="@color/colorPrimary"
             android:textSize="20sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/delete_button_ripple"
+            android:backgroundTint="#00FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{()->viewModel.onDelete()}"
+            app:srcCompat="@drawable/ic_baseline_delete_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
