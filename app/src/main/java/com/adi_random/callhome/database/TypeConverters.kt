@@ -1,11 +1,14 @@
 package com.adi_random.callhome.database
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
 import com.adi_random.callhome.ui.main.addreminder.ReminderType
 import com.cronutils.model.Cron
 import com.cronutils.model.CronType
 import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.parser.CronParser
+import java.io.ByteArrayOutputStream
 import java.util.*
 
 
@@ -30,9 +33,21 @@ class TypeConverters {
     }
 
     @TypeConverter
-    fun fromDateToLong(value: Date):Long = value.time
+    fun fromDateToLong(value: Date): Long = value.time
 
     @TypeConverter
-    fun fromLongToDate(value:Long):Date = Date(value)
+    fun fromLongToDate(value: Long): Date = Date(value)
 
+    @TypeConverter
+    fun fromBitmapToString(value: Bitmap): String {
+        val byteArray = ByteArrayOutputStream()
+        value.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+        return Base64.getEncoder().encodeToString(byteArray.toByteArray())
+    }
+
+    @TypeConverter
+    fun fromStringToBitmap(value: String): Bitmap {
+        val bytes = Base64.getDecoder().decode(value)
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    }
 }

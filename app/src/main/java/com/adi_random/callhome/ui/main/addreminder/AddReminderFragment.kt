@@ -1,11 +1,14 @@
 package com.adi_random.callhome.ui.main.addreminder
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +33,12 @@ class AddReminderFragment : BottomSheetDialogFragment() {
     private val viewModel: AddReminderViewModel by viewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Void>
 
+    val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it)
+                activityResultLauncher.launch(null)
+        }
+
     @TestOnly
     fun _getViewModel() = viewModel
 
@@ -49,7 +58,19 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         //Bind contact picker icon to callback
 
         binding.contactPickerLayout.setEndIconOnClickListener {
-            activityResultLauncher.launch(null)
+//            Check permissions
+
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_CONTACTS
+                ) == PackageManager.PERMISSION_GRANTED
+            )
+            //Permission was already granted. Show the picker
+                activityResultLauncher.launch(null)
+            else {
+                //Permission wasn't yet granted
+                requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+            }
         }
 
         //Bind the cancel button

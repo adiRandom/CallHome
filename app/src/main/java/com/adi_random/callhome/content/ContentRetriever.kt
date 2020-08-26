@@ -2,6 +2,7 @@ package com.adi_random.callhome.content
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
@@ -10,6 +11,8 @@ import com.adi_random.callhome.model.EMPTY_CONTACT
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.io.InputStream
 import java.util.*
 
 
@@ -26,7 +29,8 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         val contactProjection = arrayOf(
             ContactsContract.CommonDataKinds.Phone._ID,
             ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER,
-            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+            ContactsContract.CommonDataKinds.Phone.PHOTO_URI
         )
         val contactSelectionClause = "${ContactsContract.CommonDataKinds.Phone._ID} = ?"
         val contactSelectionArg = arrayOf(id.toString())
@@ -57,13 +61,18 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                             getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER)
                         val nameIndex =
                             getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-                        var number: String
+                        val photoUriIndex =
+                            getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
                         moveToNext()
-//                        The phone number and name for this id
-                        number = getString(contactIndex)
+//                        The fields of this contact
+                        val number = getString(contactIndex)
                         val name = getString(nameIndex)
+                        val photoUri = getString(photoUriIndex)
+                        val photoStream = getContactPhoto(Uri.parse(photoUri ?: ""))
+                        val photo = BitmapFactory.decodeStream(photoStream)
+//                        Close the cursor
                         close()
-                        Contact(id, name, number)
+                        Contact(id, name, number, photo)
                     }
                 }
             }
@@ -71,6 +80,16 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 //            TODO:Add error
             contactCursor?.close()
             return@withContext EMPTY_CONTACT
+        }
+    }
+
+    private fun getContactPhoto(uri: Uri?): InputStream? {
+        try {
+            if (uri != null)
+                return contentResolver.openAssetFileDescriptor(uri, "r")?.createInputStream()
+            return null
+        } catch (e: IOException) {
+            return null
         }
     }
 
@@ -113,7 +132,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                     val dateIndex =
                         logCursor.getColumnIndex(CallLog.Calls.DATE)
                     logCursor.moveToNext()
-                    val time=  logCursor.getLong(dateIndex)
+                    val time = logCursor.getLong(dateIndex)
                     logCursor.close()
                     return@withContext Date(time)
                 }

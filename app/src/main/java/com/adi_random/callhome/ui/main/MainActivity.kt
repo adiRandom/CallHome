@@ -3,6 +3,7 @@ package com.adi_random.callhome.ui.main
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.MainActivityBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
 
@@ -21,6 +22,10 @@ class MainActivity : AppCompatActivity() {
         binding.showModalHandler = this
         setContentView(binding.root)
 
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, MainFragment.newInstance())
+            .addToBackStack(null)
+            .commit()
     }
 
     fun showAddReminderModal(view: View) {

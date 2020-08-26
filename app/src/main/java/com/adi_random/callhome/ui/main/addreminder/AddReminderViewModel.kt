@@ -12,7 +12,9 @@ import com.adi_random.callhome.database.ReminderRepository
 import com.adi_random.callhome.model.Contact
 import com.adi_random.callhome.model.EMPTY_CONTACT
 import com.adi_random.callhome.model.ReminderBuilder
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -136,7 +138,8 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
                 .withContact(_contact.value)
                 .withTimesToRemind(timesToRemind)
                 .build()
-            ReminderRepository.getInstance(context).insertReminder(reminder)
+            withContext(Dispatchers.IO)
+           { ReminderRepository.getInstance(context).insertReminder(reminder)}
         }
     }
 }
