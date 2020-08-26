@@ -1,6 +1,8 @@
 package com.adi_random.callhome.util
 
 import android.content.Context
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.adi_random.callhome.ui.main.addreminder.ReminderType
 import com.cronutils.builder.CronBuilder
 import com.cronutils.model.Cron
@@ -10,6 +12,7 @@ import com.cronutils.model.field.expression.FieldExpression.always
 import com.cronutils.model.field.expression.FieldExpression.questionMark
 import com.cronutils.model.field.expression.FieldExpressionFactory.on
 import com.cronutils.model.time.ExecutionTime
+import org.jetbrains.annotations.TestOnly
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -19,12 +22,18 @@ import java.util.*
 /**
  * Created by Adrian Pascu on 25-Aug-20
  */
+
+@Entity
 class RemindTime(
-    private val timeToRemind: Int,
-    private val type: ReminderType,
+
+    val timeToRemind: Int,
+    val type: ReminderType,
+    val reminderId: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
 ) {
 
-    private var cron: Cron = when (type) {
+    var cron: Cron = when (type) {
         ReminderType.DAILY -> {
             CronBuilder.cron(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ))
                 .withYear(always())
@@ -41,8 +50,7 @@ class RemindTime(
                 .withYear(always())
                 .withDoM(questionMark())
                 .withMonth(always())
-//                        Cron is 0-6
-                .withDoW(on(timeToRemind - 1))
+                .withDoW(on(timeToRemind))
                 .withHour(on(0))
 //                        TODO: Fetch hour and minute from settings
                 .withMinute(on(0))
@@ -63,7 +71,7 @@ class RemindTime(
         }
     }
 
-    fun calculateNextExecution(context: Context,lastCallTime:Date): Date {
+    fun calculateNextExecution(context: Context, lastCallTime: Date): Date {
         val executionTime = ExecutionTime.forCron(cron)
         val lastExecution =
             ZonedDateTime.ofInstant(
@@ -71,5 +79,10 @@ class RemindTime(
                 ZoneId.systemDefault()
             )
         return Date.from(executionTime.nextExecution(lastExecution).get().toInstant())
+    }
+
+    @TestOnly
+    fun _getId(): Int {
+        return id
     }
 }

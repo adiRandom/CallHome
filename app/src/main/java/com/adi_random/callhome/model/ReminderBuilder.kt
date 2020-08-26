@@ -6,15 +6,20 @@ import com.adi_random.callhome.ui.main.addreminder.ReminderType
 import com.adi_random.callhome.util.RemindTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import java.util.*
 
 
 /**
  * Created by Adrian Pascu on 25-Aug-20
  */
-class ReminderBuilder(private val context: Context,private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+class ReminderBuilder(
+    private val context: Context,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
     private var contact: Contact = EMPTY_CONTACT
     private var type = ReminderType.WEEKLY
     private var timesToRemind = emptyList<Int>()
+    private var id: String = UUID.randomUUID().toString()
 
     fun withContact(contact: Contact?): ReminderBuilder {
         if (contact != null)
@@ -35,11 +40,17 @@ class ReminderBuilder(private val context: Context,private val dispatcher: Corou
         return this
     }
 
+    fun withId(id: String?): ReminderBuilder {
+        if (id != null)
+            this.id = id
+        return this
+    }
+
     suspend fun build(): Reminder {
-        val remindTimes = timesToRemind.map { RemindTime(it, type) }
-        val contentRetriever = ContentRetriever(context,dispatcher)
+        val remindTimes = timesToRemind.map { RemindTime(it, type, reminderId = id) }
+        val contentRetriever = ContentRetriever(context, dispatcher)
         val lastCallDate = contentRetriever.getLastCallDate(contact)
-        return Reminder(contact, remindTimes, lastCallDate)
+        return Reminder(contact, remindTimes, lastCallDate, id)
     }
 
 }

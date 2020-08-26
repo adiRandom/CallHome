@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.adi_random.callhome.R
 import com.adi_random.callhome.content.ContentRetriever
+import com.adi_random.callhome.database.ReminderRepository
 import com.adi_random.callhome.model.Contact
 import com.adi_random.callhome.model.EMPTY_CONTACT
 import com.adi_random.callhome.model.ReminderBuilder
@@ -33,8 +34,9 @@ enum class ReminderType(val value: Int) {
     }
 }
 
-class AddReminderViewModel(val app: Application) : AndroidViewModel(app) {
-    private val contentRetriever = ContentRetriever(app.applicationContext)
+class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
+    private val context = app.applicationContext
+    private val contentRetriever = ContentRetriever(context)
     private val _contact: MutableLiveData<Contact> by lazy {
         MutableLiveData<Contact>(EMPTY_CONTACT)
     }
@@ -129,12 +131,12 @@ class AddReminderViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun createReminder() {
         viewModelScope.launch {
-            val reminder = ReminderBuilder(app.applicationContext)
+            val reminder = ReminderBuilder(context)
                 .withReminderType(reminderType.value)
                 .withContact(_contact.value)
                 .withTimesToRemind(timesToRemind)
                 .build()
-//            TODO: Save it to databas
+            ReminderRepository.getInstance(context).insertReminder(reminder)
         }
     }
 }
