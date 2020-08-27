@@ -1,10 +1,17 @@
 package com.adi_random.callhome.worker
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.adi_random.callhome.R
 import com.adi_random.callhome.content.ContentRetriever
 import com.adi_random.callhome.model.Reminder
+import com.adi_random.callhome.ui.main.ERROR_NOTIFICATION_CHANNEL
+import com.adi_random.callhome.ui.main.MainActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
@@ -26,7 +33,31 @@ class CallHistoryWatchWorker(
 
 //                    Check the error count
                     if (reminder.errorCount >= 5) {
-                        //                        TODO: Notify user to delete reminder
+// Notify user to delete reminder
+
+                        val intent = Intent(appCtx, MainActivity::class.java).apply {
+                            putExtra(MainActivity.ReminderErrorIdParam, reminder.reminderId)
+                        }
+                        val pendingIntent = PendingIntent.getActivity(appCtx, 0, intent, 0)
+
+                        var notificationBuilder =
+                            NotificationCompat.Builder(appCtx, ERROR_NOTIFICATION_CHANNEL)
+//                                TODO: Change icon
+                                .setSmallIcon(R.drawable.ic_baseline_contacts_24)
+                                .setContentTitle("Reminder error")
+                                .setContentText("There seems to be an error with one of your reminders")
+                                .setStyle(
+                                    NotificationCompat.BigTextStyle()
+                                        .bigText("There seems to be an error with one of your reminders. We recommend deleting and recreating it to continue getting that reminder")
+                                )
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setContentIntent(pendingIntent)
+
+//                        Send notification
+                        with(NotificationManagerCompat.from(appCtx)) {
+                            notify(Random().nextInt(), notificationBuilder.build())
+                        }
+
                     }
 
                     //Get the phone number associated with this reminder
