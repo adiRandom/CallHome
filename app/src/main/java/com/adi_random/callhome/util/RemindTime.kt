@@ -1,6 +1,5 @@
 package com.adi_random.callhome.util
 
-import android.content.Context
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.adi_random.callhome.ui.main.addreminder.ReminderType
@@ -71,7 +70,7 @@ class RemindTime(
         }
     }
 
-    fun calculateNextExecution(context: Context, lastCallTime: Date): Date {
+    fun calculateNextExecution(lastCallTime: Date): Date {
         val executionTime = ExecutionTime.forCron(cron)
         val lastExecution =
             ZonedDateTime.ofInstant(

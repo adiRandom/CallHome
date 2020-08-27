@@ -90,6 +90,10 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
     }
 
 
+    /**
+     * @return Date if a valid last call was found, null otherwise
+     */
+    @Throws(Error::class)
     suspend fun getLastCallDate(contact: Contact): Date? = withContext(dispatcher) {
 
 
@@ -115,7 +119,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
             when (logCursor?.count) {
                 null -> {
                     logCursor?.close()
-                    return@withContext null
+                    throw Error("Error retrieving call log")
                 }
                 0 -> {
                     logCursor.close()
@@ -125,10 +129,18 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                 else -> {
                     val dateIndex =
                         logCursor.getColumnIndex(CallLog.Calls.DATE)
-                    logCursor.moveToNext()
-                    val time = logCursor.getLong(dateIndex)
-                    logCursor.close()
-                    return@withContext Date(time)
+                    val callTypeIndex = logCursor.getColumnIndex(CallLog.Calls.TYPE)
+                    while (logCursor.moveToNext()) {
+                        val callType = logCursor.getType(callTypeIndex)
+                        if (CallLog.Calls.OUTGOING_TYPE == callType || callType == CallLog.Calls.INCOMING_TYPE) {
+//                            First valid call
+                            val time = logCursor.getLong(dateIndex)
+                            logCursor.close()
+                            return@withContext Date(time)
+                        }
+                    }
+//                    No call found
+                    null
                 }
 
             }

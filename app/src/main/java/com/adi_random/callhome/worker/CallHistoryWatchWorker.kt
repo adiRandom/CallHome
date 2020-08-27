@@ -30,7 +30,6 @@ class CallHistoryWatchWorker(
         if (reminders != null)
             for (reminder in reminders) {
                 GlobalScope.launch {
-
 //                    Check the error count
                     if (reminder.errorCount >= 5) {
 // Notify user to delete reminder
@@ -60,21 +59,22 @@ class CallHistoryWatchWorker(
 
                     }
 
+                    //Even if there were errors until now, attempt to handle the reminder
+
                     //Get the phone number associated with this reminder
 
                     //Get the date of the last placed call to that number
-                    val date = contentRetriever.getLastCallDate(reminder.contact)
+                    try {
+                        val date = contentRetriever.getLastCallDate(reminder.contact)
 
-                    if (date != null) {
                         for (remindTime in reminder.timesToRemind) {
                             launch {
                                 val nextCallDate =
                                     remindTime.calculateNextExecution(
-                                        appCtx,
                                         reminder.lastCallDate
                                     )
-                                if (date >= nextCallDate) {
-                                    //                    Next call was made
+                                if (date != null && date >= nextCallDate) {
+                                    //  Next call was made
                                     reminder.madeCall(date)
 
                                 } else if (Date() >= nextCallDate) {
@@ -94,12 +94,9 @@ class CallHistoryWatchWorker(
 //                            TODO: Notify user they missed to place a call
                                     }
                                 }
-
                             }
-
                         }
-                    } else {
-//                        Reminder error
+                    } catch (e: Error) {
                         reminder.countError(appCtx)
                     }
 

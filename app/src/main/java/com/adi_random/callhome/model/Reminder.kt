@@ -20,7 +20,7 @@ import java.util.*
 class Reminder(
     @Embedded
     var contact: Contact,
-
+//The call date from the last reminder
     var lastCallDate: Date,
     @PrimaryKey
     var reminderId: String
