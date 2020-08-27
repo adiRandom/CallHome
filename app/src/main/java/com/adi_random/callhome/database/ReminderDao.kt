@@ -1,10 +1,7 @@
 package com.adi_random.callhome.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import com.adi_random.callhome.database.models.ReminderAndRemindTime
 import com.adi_random.callhome.model.Reminder
 
@@ -17,13 +14,16 @@ interface ReminderDao {
 
     @Query("SELECT * FROM Reminder")
     @Transaction
-     fun getReminders(): LiveData<List<ReminderAndRemindTime>>
+    fun getReminders(): LiveData<List<ReminderAndRemindTime>>
 
     @Query("SELECT * FROM Reminder WHERE reminderId = :id")
     @Transaction
-     fun getReminderById(id: String): ReminderAndRemindTime
+    fun getReminderById(id: String): ReminderAndRemindTime
 
     @Insert
-     fun addReminder(reminder: Reminder): Unit
+    fun addReminder(reminder: Reminder)
+
+    @Update
+    fun updateReminder(reminder: Reminder)
 
 }

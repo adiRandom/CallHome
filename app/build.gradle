@@ -40,8 +40,8 @@ android {
         applicationId "com.adi_random.callhome"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 7
-        versionName "1.1.2"
+        versionCode 8
+        versionName "1.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -125,11 +125,11 @@ dependencies {
 
 
     // androidx.test
-    def androidx_test_runner = "1.2.0"
+    def androidx_test_runner = "1.3.0"
     androidTestImplementation "androidx.test:runner:$androidx_test_runner"
     androidTestImplementation "androidx.test:rules:$androidx_test_runner"
 
-    def androidx_test_core = "1.2.0"
+    def androidx_test_core = "1.3.0"
     androidTestImplementation "androidx.test:core-ktx:$androidx_test_core"
 
 

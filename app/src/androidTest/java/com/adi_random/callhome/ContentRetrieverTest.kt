@@ -36,7 +36,9 @@ class ContentRetrieverTest {
         val ids = contentRetriever.getAllContactsIds()
         val numbers = emptyList<Contact>().toMutableList()
         for (id in ids) {
-            numbers += contentRetriever.getContact(id)
+            val contact = contentRetriever.getContact(id)
+            if (contact != null)
+                numbers += contact
         }
         assertThat(ids, hasSize(1))
     }
@@ -45,7 +47,7 @@ class ContentRetrieverTest {
     fun getContactImage() = runBlockingTest {
         val ids = contentRetriever.getAllContactsIds()
         val contact = contentRetriever.getContact(ids[0])
-        assertThat(contact.photo, notNullValue())
+        assertThat(contact?.photo, notNullValue())
     }
 
     @Test
@@ -59,7 +61,7 @@ class ContentRetrieverTest {
 
 //        Get the base 64 representation of the picture from the content resolver for reference
         var byteArray = ByteArrayOutputStream()
-        contact.photo?.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+        contact?.photo?.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
         val photoBase64Representation = Base64.getEncoder().encodeToString(byteArray.toByteArray())
 
 
@@ -70,11 +72,13 @@ class ContentRetrieverTest {
             .withTimesToRemind(listOf(1))
             .build()
 
-        repository.insertReminder(reminder)
+        if (reminder != null)
+            repository.insertReminder(reminder)
 
         //Get reminder and compare pictures
 
-        val dbPicture = repository.getReminderById(reminder.reminderId).reminder.contact.photo
+        val dbPicture =
+            repository.getReminderById(reminder?.reminderId ?: "").reminder.contact.photo
         byteArray = ByteArrayOutputStream()
         dbPicture?.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
         val dbPhotoBase64Representation =

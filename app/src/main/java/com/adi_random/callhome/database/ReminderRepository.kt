@@ -20,7 +20,7 @@ class ReminderRepository {
         db = _db
     }
 
-     fun insertReminder(reminder: Reminder) {
+    fun insertReminder(reminder: Reminder) {
         db.remindTimeDao().insertAll(reminder.timesToRemind)
         db.reminderDao().addReminder(reminder)
     }
@@ -29,7 +29,11 @@ class ReminderRepository {
         db.reminderDao().getReminders()
 
 
-     fun getReminderById(id: String) = db.reminderDao().getReminderById(id)
+    fun getReminderById(id: String) = db.reminderDao().getReminderById(id)
+
+    fun updateReminder(reminder: Reminder) {
+        db.reminderDao().updateReminder(reminder)
+    }
 
     companion object {
         private lateinit var repo: ReminderRepository

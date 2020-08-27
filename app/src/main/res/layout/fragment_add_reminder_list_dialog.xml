@@ -39,6 +39,7 @@
             app:endIconContentDescription="Pick a contact"
             app:endIconDrawable="@drawable/ic_baseline_contacts_24"
             app:endIconMode="custom"
+            app:errorEnabled="@{viewModel.contactError}"
             app:placeholderText="Pick a contact">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -94,6 +95,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/times_to_remind_error_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fanwood_text"
+                    android:text="Pick at least one time to be reminded"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="20sp"
+                    android:textStyle="italic"
+                    android:visibility='@{viewModel.timesToRemindError?"visible":"inviible"}' />
 
                 <Button
                     android:id="@+id/add_time_button"

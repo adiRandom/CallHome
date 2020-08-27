@@ -7,7 +7,6 @@ import android.net.Uri
 import android.provider.CallLog
 import android.provider.ContactsContract
 import com.adi_random.callhome.model.Contact
-import com.adi_random.callhome.model.EMPTY_CONTACT
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,7 +22,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 
     private var contentResolver: ContentResolver = ctx.contentResolver
 
-    suspend fun getContact(id: Long): Contact = withContext(dispatcher) {
+    suspend fun getContact(id: Long): Contact? = withContext(dispatcher) {
 
         val contactUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         val contactProjection = arrayOf(
@@ -46,14 +45,12 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         try {
             when (contactCursor?.count) {
                 null -> {
-//                    TODO: Add error
                     contactCursor?.close()
-                    return@withContext EMPTY_CONTACT
+                    return@withContext null
                 }
                 0 -> {
-//                    TODO: Count fails
                     contactCursor.close()
-                    return@withContext EMPTY_CONTACT
+                    return@withContext null
                 }
                 else -> {
                     return@withContext contactCursor.run {
@@ -77,9 +74,8 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                 }
             }
         } catch (e: Error) {
-//            TODO:Add error
             contactCursor?.close()
-            return@withContext EMPTY_CONTACT
+            return@withContext null
         }
     }
 
@@ -94,7 +90,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
     }
 
 
-    suspend fun getLastCallDate(contact: Contact): Date = withContext(dispatcher) {
+    suspend fun getLastCallDate(contact: Contact): Date? = withContext(dispatcher) {
 
 
         //Get the call history for this number
@@ -118,14 +114,12 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         try {
             when (logCursor?.count) {
                 null -> {
-//                                    TODO: Add error
                     logCursor?.close()
-                    return@withContext Date(0)
+                    return@withContext null
                 }
                 0 -> {
-//                                            TODO: Count fail lookup
                     logCursor.close()
-                    return@withContext Date(0)
+                    return@withContext null
                 }
 
                 else -> {
@@ -139,9 +133,8 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 
             }
         } catch (e: java.lang.Error) {
-//                                    TODO: Add error
             logCursor?.close()
-            return@withContext Date(0)
+            return@withContext null
         }
 
     }
@@ -153,11 +146,11 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         try {
             when (cursor?.count) {
                 null -> {
-                    cursor?.close(); emptyList<Long>()
+                    cursor?.close(); emptyList()
 
                 }
                 0 -> {
-                    cursor.close(); emptyList<Long>()
+                    cursor.close(); emptyList()
                 }
                 else -> {
                     cursor.let {
@@ -175,23 +168,21 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 
         } catch (e: Error) {
             cursor?.close()
-            emptyList<Long>()
+            emptyList()
         }
     }
 
-    suspend fun getContactIdFromUri(uri: Uri): Long = withContext(dispatcher) {
+    suspend fun getContactIdFromUri(uri: Uri): Long? = withContext(dispatcher) {
         val projection = arrayOf(ContactsContract.Contacts._ID)
         val cursor = contentResolver.query(uri, projection, null, null, null)
         try {
             when (cursor?.count) {
                 null -> {
-//                    TODO: Handle error
-                    cursor?.close(); 0L
+                    cursor?.close(); null
 
                 }
                 0 -> {
-//                    TODO: Handle error
-                    cursor.close(); 0L
+                    cursor.close(); null
                 }
                 else -> {
                     cursor.let {
@@ -209,8 +200,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 
         } catch (e: Error) {
             cursor?.close()
-//            TODO: Handle error
-            0L
+            null
         }
     }
 

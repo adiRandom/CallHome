@@ -12,5 +12,5 @@ import com.adi_random.callhome.util.RemindTime
 @Dao
 interface RemindTimeDao {
     @Insert
-    fun insertAll(values: List<RemindTime>): Unit
+    fun insertAll(values: List<RemindTime>)
 }

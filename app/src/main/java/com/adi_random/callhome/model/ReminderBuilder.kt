@@ -46,11 +46,15 @@ class ReminderBuilder(
         return this
     }
 
-    suspend fun build(): Reminder {
+    suspend fun build(): Reminder? {
         val remindTimes = timesToRemind.map { RemindTime(it, type, reminderId = id) }
         val contentRetriever = ContentRetriever(context, dispatcher)
         val lastCallDate = contentRetriever.getLastCallDate(contact)
-        return Reminder(contact, remindTimes, lastCallDate, id)
+        return if (lastCallDate != null)
+            Reminder(contact, remindTimes, lastCallDate, id)
+        else {
+            null
+        }
     }
 
 }

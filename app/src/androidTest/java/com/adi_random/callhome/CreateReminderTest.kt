@@ -49,7 +49,7 @@ class CreateReminderTest {
         val expectedCalendar = Calendar.getInstance()
         expectedCalendar.time = Date(1598358060000)
         val calendar = Calendar.getInstance()
-        calendar.time = reminder.lastCallDate
+        calendar.time = reminder?.lastCallDate ?: Date()
         assertThat(
             calendar.get(Calendar.DAY_OF_MONTH),
             `is`(expectedCalendar.get(Calendar.DAY_OF_MONTH))
@@ -77,8 +77,8 @@ class CreateReminderTest {
         val dailyReminderId = UUID.randomUUID().toString()
 
 //        Monday and friday
-        val weeklyReminderTimesToRemindInt = listOf<Int>(1, 5)
-        val weeklyReminderTimesToRemind = weeklyReminderTimesToRemindInt.map {
+        val weeklyReminderTimesToRemindInt = listOf(1, 5)
+        weeklyReminderTimesToRemindInt.map {
             RemindTime(
                 it,
                 ReminderType.WEEKLY,
@@ -87,8 +87,8 @@ class CreateReminderTest {
         }
 
 //        9:30 and 10:45
-        val dailyReminderTimesToRemindInt = listOf<Int>(930, 1045)
-        val dailyReminderTimesToRemind = weeklyReminderTimesToRemindInt.map {
+        val dailyReminderTimesToRemindInt = listOf(930, 1045)
+        weeklyReminderTimesToRemindInt.map {
             RemindTime(
                 it,
                 ReminderType.DAILY,
@@ -113,8 +113,8 @@ class CreateReminderTest {
 
         //Insert the reminders in the database, then retrieve them and compare the 2
 
-        repository.insertReminder(weeklyReminder)
-        repository.insertReminder(dailyReminder)
+        repository.insertReminder(weeklyReminder!!)
+        repository.insertReminder(dailyReminder!!)
 
         val dbWeeklyReminder = Reminder.fromReminderAndRemindTime(
             repository.getReminderById(weeklyReminderId)

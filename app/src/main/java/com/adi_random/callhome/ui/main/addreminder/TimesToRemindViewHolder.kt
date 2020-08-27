@@ -14,7 +14,7 @@ import com.adi_random.callhome.databinding.TimeToRemindItemBinding
 class TimesToRemindViewHolder(private val binding: TimeToRemindItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    inner class ViewModel(
+    class ViewModel(
         var value: Int,
         var type: ReminderType,
         var _onDelete: () -> Unit

@@ -46,9 +46,10 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
     fun getContact(): LiveData<Contact> = _contact
 
     private val timesToRemind: MutableList<Int> = emptyList<Int>().toMutableList()
-    fun getTimesToRemind(): List<Int> = timesToRemind
 
     fun addTimeToRemind(hour: Int, _min: Int) {
+//        Set times to remind error to false
+        timesToRemindError.value = false
         val min = if (_min < 10) "0${_min}"; else _min
         val value = "${hour}${min}".toInt()
         if (!timesToRemind.contains(value)) {
@@ -65,6 +66,8 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
      *       1-31 for day of the month
      */
     fun addTimeToRemind(day: Int) {
+        //        Set times to remind error to false
+        timesToRemindError.value = false
         if (!timesToRemind.contains(day)) {
             timesToRemind.add(day)
             timesToRemind.sort()
@@ -73,7 +76,7 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun removeTimeToRemind(pos: Int) {
+    private fun removeTimeToRemind(pos: Int) {
         timesToRemindAdapter.notifyItemRemoved(pos)
         timesToRemind.removeAt(pos)
     }
@@ -85,11 +88,21 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getReminderType(): LiveData<ReminderType> = reminderType
 
+    /**
+     * @return false if the retrieval failed
+     */
     fun setContact(uri: Uri) {
+//        Set contact error to false
+        contactError.value = false
         viewModelScope.launch {
             val id = contentRetriever.getContactIdFromUri(uri)
-            val contact = contentRetriever.getContact(id)
-            _contact.postValue(contact)
+            if (id != null) {
+                val contact = contentRetriever.getContact(id)
+                _contact.postValue(contact)
+            } else {
+                _contact.postValue(EMPTY_CONTACT)
+                contactRetrievalError.postValue(true)
+            }
         }
     }
 
@@ -122,24 +135,65 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
             this::removeTimeToRemind
         )
 
-    //
-    fun clear() {
-        reminderType.postValue(ReminderType.WEEKLY)
-        _contact.value = EMPTY_CONTACT
-        timesToRemind.clear()
-        timesToRemindAdapter =
-            TimesToRemindAdapter(emptyList(), ReminderType.WEEKLY, this::removeTimeToRemind)
+
+    private val contactError: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
     }
 
-    fun createReminder() {
-        viewModelScope.launch {
-            val reminder = ReminderBuilder(context)
-                .withReminderType(reminderType.value)
-                .withContact(_contact.value)
-                .withTimesToRemind(timesToRemind)
-                .build()
-            withContext(Dispatchers.IO)
-           { ReminderRepository.getInstance(context).insertReminder(reminder)}
+    fun getContactError(): LiveData<Boolean> = contactError
+
+    private val timesToRemindError: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+
+    fun getTimesToRemindError(): LiveData<Boolean> = timesToRemindError
+
+    //    Returns true if the reminder was created and false if there were input errors
+    fun createReminder(): Boolean {
+
+//        Check for errors
+        if (_contact.value == EMPTY_CONTACT)
+            contactError.value = true
+
+        if (timesToRemind.isEmpty())
+            timesToRemindError.value = true
+
+        if (timesToRemindError.value != false && contactError.value != false) {
+            viewModelScope.launch {
+                val reminder = ReminderBuilder(context)
+                    .withReminderType(reminderType.value)
+                    .withContact(_contact.value)
+                    .withTimesToRemind(timesToRemind)
+                    .build()
+                if (reminder != null)
+                    withContext(Dispatchers.IO)
+                    { ReminderRepository.getInstance(context).insertReminder(reminder) }
+                else {
+                    reminderSavingError.postValue(true)
+                }
+            }
+            return true
         }
+        return false
+    }
+
+    private val contactRetrievalError: MutableLiveData<Boolean> by lazy {
+        MutableLiveData(false)
+    }
+
+    fun getContactRetrievalError(): LiveData<Boolean> = contactRetrievalError
+
+    fun dismissContactRetrievalError() {
+        contactRetrievalError.value = false
+    }
+
+    private val reminderSavingError: MutableLiveData<Boolean> by lazy {
+        MutableLiveData(false)
+    }
+
+    fun getReminderSavingError(): LiveData<Boolean> = reminderSavingError
+
+    fun dismissReminderSavingError() {
+        reminderSavingError.value = false
     }
 }

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import org.jetbrains.annotations.TestOnly
 
 
 /**
@@ -33,14 +32,12 @@ class AddReminderFragment : BottomSheetDialogFragment() {
     private val viewModel: AddReminderViewModel by viewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Void>
 
-    val requestPermissionLauncher =
+    private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it)
                 activityResultLauncher.launch(null)
         }
 
-    @TestOnly
-    fun _getViewModel() = viewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,8 +78,8 @@ class AddReminderFragment : BottomSheetDialogFragment() {
 
         //Bind the save button
         binding.saveButton.setOnClickListener {
-            viewModel.createReminder()
-            dismiss()
+            if (viewModel.createReminder())
+                dismiss()
         }
 
         //Bind the add time button
@@ -121,6 +118,35 @@ class AddReminderFragment : BottomSheetDialogFragment() {
             viewModel.onRadioCheckedChanged(id)
         }
 
+        //Set the lifecycle owner
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        //Subscribe to retrieval errors
+        viewModel.getContactRetrievalError().observe(viewLifecycleOwner) {
+            if (it)
+                ContactPickingErrorDialog.newInstance()
+                    .setCallback {
+                        viewModel.dismissContactRetrievalError()
+                    }
+                    .show(
+                        childFragmentManager,
+                        CONTACT_PICKER_ERROR_DIALOG_TAG
+                    )
+        }
+
+        viewModel.getReminderSavingError().observe(viewLifecycleOwner) {
+            if (it)
+                AddReminderErrorDialog.newInstance()
+                    .setCallback {
+                        viewModel.dismissReminderSavingError()
+                        dismiss()
+                    }
+                    .show(
+                        childFragmentManager,
+                        ADD_REMINDER_ERROR_DIALOG_TAG
+                    )
+        }
+
         return binding.root
     }
 
@@ -136,6 +162,8 @@ class AddReminderFragment : BottomSheetDialogFragment() {
     companion object {
 
         const val TIME_PICKER_TAG = "time_picker_tag"
+        const val CONTACT_PICKER_ERROR_DIALOG_TAG = "contact_retrieval_error"
+        const val ADD_REMINDER_ERROR_DIALOG_TAG = "add_reminder_error"
 
         fun newInstance(): AddReminderFragment =
             AddReminderFragment()
