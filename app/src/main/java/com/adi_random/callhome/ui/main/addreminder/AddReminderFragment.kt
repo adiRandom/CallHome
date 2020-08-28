@@ -1,6 +1,7 @@
 package com.adi_random.callhome.ui.main.addreminder
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
@@ -29,7 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class AddReminderFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentAddReminderListDialogBinding
-    private val viewModel: AddReminderViewModel by viewModels()
+    private val viewModel: AddReminderViewModel by activityViewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Void>
 
     private val requestPermissionLauncher =
@@ -55,19 +56,11 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         //Bind contact picker icon to callback
 
         binding.contactPickerLayout.setEndIconOnClickListener {
-//            Check permissions
+            pickContact()
+        }
 
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_CONTACTS
-                ) == PackageManager.PERMISSION_GRANTED
-            )
-            //Permission was already granted. Show the picker
-                activityResultLauncher.launch(null)
-            else {
-                //Permission wasn't yet granted
-                requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
-            }
+        binding.contactPickerLayout.setErrorIconOnClickListener {
+            pickContact()
         }
 
         //Bind the cancel button
@@ -80,6 +73,10 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         binding.saveButton.setOnClickListener {
             if (viewModel.createReminder())
                 dismiss()
+            else {
+                //Set contact picker error text
+                binding.contactPickerLayout.error = "Error"
+            }
         }
 
         //Bind the add time button
@@ -134,18 +131,9 @@ class AddReminderFragment : BottomSheetDialogFragment() {
                     )
         }
 
-        viewModel.getReminderSavingError().observe(viewLifecycleOwner) {
-            if (it)
-                AddReminderErrorDialog.newInstance()
-                    .setCallback {
-                        viewModel.dismissReminderSavingError()
-                        dismiss()
-                    }
-                    .show(
-                        childFragmentManager,
-                        ADD_REMINDER_ERROR_DIALOG_TAG
-                    )
-        }
+
+
+
 
         return binding.root
     }
@@ -158,6 +146,25 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         }
     }
 
+    fun pickContact() {
+        //            Check permissions
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+        //Permission was already granted. Show the picker
+            activityResultLauncher.launch(null)
+        else {
+            //Permission wasn't yet granted
+            requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        viewModel.clear()
+        super.onDismiss(dialog)
+    }
 
     companion object {
 

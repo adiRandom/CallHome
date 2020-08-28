@@ -49,14 +49,12 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
 
     fun addTimeToRemind(hour: Int, _min: Int) {
 //        Set times to remind error to false
-        timesToRemindError.value = false
+        _timesToRemindError.value = false
         val min = if (_min < 10) "0${_min}"; else _min
         val value = "${hour}${min}".toInt()
         if (!timesToRemind.contains(value)) {
-            timesToRemind.add(value)
-            timesToRemind.sort()
-            val pos = timesToRemind.indexOf(value)
-            timesToRemindAdapter.notifyItemInserted(pos)
+            timesToRemind.add(0, value)
+            timesToRemindAdapter.notifyItemInserted(0)
         }
     }
 
@@ -67,12 +65,10 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun addTimeToRemind(day: Int) {
         //        Set times to remind error to false
-        timesToRemindError.value = false
+        _timesToRemindError.value = false
         if (!timesToRemind.contains(day)) {
-            timesToRemind.add(day)
-            timesToRemind.sort()
-            val pos = timesToRemind.indexOf(day)
-            timesToRemindAdapter.notifyItemInserted(pos)
+            timesToRemind.add(0, day)
+            timesToRemindAdapter.notifyItemInserted(0)
         }
     }
 
@@ -93,7 +89,7 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun setContact(uri: Uri) {
 //        Set contact error to false
-        contactError.value = false
+        _contactError.value = false
         viewModelScope.launch {
             val id = contentRetriever.getContactIdFromUri(uri)
             if (id != null) {
@@ -136,29 +132,33 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
         )
 
 
-    private val contactError: MutableLiveData<Boolean> by lazy {
+    //    No contact selected
+    private val _contactError: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
 
-    fun getContactError(): LiveData<Boolean> = contactError
+    fun getContactError(): LiveData<Boolean> = _contactError
 
-    private val timesToRemindError: MutableLiveData<Boolean> by lazy {
+
+    //    No times to remind added
+    private val _timesToRemindError: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
 
-    fun getTimesToRemindError(): LiveData<Boolean> = timesToRemindError
+    fun getTimesToRemindError(): LiveData<Boolean> = _timesToRemindError
+
 
     //    Returns true if the reminder was created and false if there were input errors
     fun createReminder(): Boolean {
 
 //        Check for errors
         if (_contact.value == EMPTY_CONTACT)
-            contactError.value = true
+            _contactError.value = true
 
         if (timesToRemind.isEmpty())
-            timesToRemindError.value = true
+            _timesToRemindError.value = true
 
-        if (timesToRemindError.value != false && contactError.value != false) {
+        if (_timesToRemindError.value == false && _contactError.value == false) {
             viewModelScope.launch {
                 val reminder = ReminderBuilder(context)
                     .withReminderType(reminderType.value)
@@ -183,6 +183,7 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getContactRetrievalError(): LiveData<Boolean> = contactRetrievalError
 
+
     fun dismissContactRetrievalError() {
         contactRetrievalError.value = false
     }
@@ -195,5 +196,16 @@ class AddReminderViewModel(app: Application) : AndroidViewModel(app) {
 
     fun dismissReminderSavingError() {
         reminderSavingError.value = false
+    }
+
+    fun clear() {
+        _contact.value = EMPTY_CONTACT
+        timesToRemind.clear()
+        reminderSavingError.value = false
+        contactRetrievalError.value = false
+        reminderType.value = ReminderType.WEEKLY
+        _contactError.value = false
+        _timesToRemindError.value = false
+
     }
 }

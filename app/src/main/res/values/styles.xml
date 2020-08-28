@@ -3,6 +3,7 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorError">@color/colorPrimaryLight</item>
         <item name="colorSecondary">@color/colorPrimary</item>
         <item name="colorOnSecondary">@color/colorAccent</item>
         <item name="colorOnSurface">@color/colorAccent</item>
@@ -34,6 +35,8 @@
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="boxStrokeColor">@color/contact_input_color</item>
         <item name="android:textColor">@color/colorPrimary</item>
+        <item name="boxStrokeErrorColor">@color/colorPrimaryLight</item>
+        <item name="errorTextColor">@color/colorPrimaryLight</item>
     </style>
 
     <style name="DropdownItemStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">

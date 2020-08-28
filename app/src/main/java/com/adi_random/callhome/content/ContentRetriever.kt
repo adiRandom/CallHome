@@ -10,6 +10,7 @@ import com.adi_random.callhome.model.Contact
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
@@ -151,6 +152,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
 
     }
 
+    @TestOnly
     suspend fun getAllContactsIds(): List<Long> = withContext(dispatcher) {
         val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         val projection = arrayOf(ContactsContract.CommonDataKinds.Phone._ID)
@@ -184,6 +186,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         }
     }
 
+    @TestOnly
     suspend fun getContactIdFromUri(uri: Uri): Long? = withContext(dispatcher) {
         val projection = arrayOf(ContactsContract.Contacts._ID)
         val cursor = contentResolver.query(uri, projection, null, null, null)

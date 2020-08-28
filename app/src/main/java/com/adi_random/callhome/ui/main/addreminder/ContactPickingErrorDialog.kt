@@ -22,7 +22,7 @@ class ContactPickingErrorDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setTitle("Error")
-            .setMessage("There was an error while picking the contact. Try again")
+            .setMessage("There was an error while picking the contact. Try again.")
             .setPositiveButton(
                 "OK"
             ) { p0, _ ->

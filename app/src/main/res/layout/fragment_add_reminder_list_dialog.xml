@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.adi_random.callhome.ui.main.addreminder.AddReminderViewModel" />
@@ -26,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/fanwood_text"
-            android:hint="Pick a contact"
+            android:hint="@string/pick_a_contact"
             android:text="@string/add_a_new_reminder"
             android:textColor="@color/colorPrimary"
             android:textSize="24sp"
@@ -36,10 +38,13 @@
             android:id="@+id/contact_picker_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:boxStrokeErrorColor="@color/colorPrimaryLight"
             app:endIconContentDescription="Pick a contact"
             app:endIconDrawable="@drawable/ic_baseline_contacts_24"
             app:endIconMode="custom"
+            app:errorIconDrawable="@drawable/ic_baseline_contacts_24"
             app:errorEnabled="@{viewModel.contactError}"
+            app:helperTextEnabled="true"
             app:placeholderText="Pick a contact">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -48,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:enabled="false"
-                android:hint="Pick a contact"
+                android:hint="@string/pick_a_contact"
                 android:text="@{viewModel.contact.name}"
                 android:textColor="@color/contact_input_text_color"
                 android:textSize="18sp" />
@@ -83,42 +88,49 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:scrollbars="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/times_to_remind"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp" />
+                    app:layout_constraintHeight_max="200dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/times_to_remind_error_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/fanwood_text"
-                    android:text="Pick at least one time to be reminded"
+                    android:text="@string/pick_at_least_one_time_to_be_reminded"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimaryLight"
                     android:textSize="20sp"
                     android:textStyle="italic"
-                    android:visibility='@{viewModel.timesToRemindError?"visible":"inviible"}' />
+                    android:visibility="@{viewModel.timesToRemindError?View.VISIBLE:View.GONE}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/times_to_remind" />
 
-                <Button
-                    android:id="@+id/add_time_button"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:text="Add time"
-                    app:icon="@drawable/ic_baseline_add_32" />
-
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
+        <Button
+            android:id="@+id/add_time_button"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="start|center_vertical"
+            android:text="Add time"
+            app:icon="@drawable/ic_baseline_add_32" />
 
         <LinearLayout
             android:id="@+id/button_holder"

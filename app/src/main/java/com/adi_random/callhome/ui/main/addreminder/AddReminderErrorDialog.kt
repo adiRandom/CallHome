@@ -24,7 +24,7 @@ class AddReminderErrorDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setTitle("Error")
-            .setMessage("There was an error while saving the reminder. Try again")
+            .setMessage("There was an error while saving the reminder. Try again.")
             .setPositiveButton(
                 "OK"
             ) { p0, _ ->

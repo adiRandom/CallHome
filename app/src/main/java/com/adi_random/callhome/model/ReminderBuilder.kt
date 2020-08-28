@@ -49,12 +49,12 @@ class ReminderBuilder(
     suspend fun build(): Reminder? {
         val remindTimes = timesToRemind.map { RemindTime(it, type, reminderId = id) }
         val contentRetriever = ContentRetriever(context, dispatcher)
-        try {
+        return try {
             val lastCallDate = contentRetriever.getLastCallDate(contact)
             //    If there was no call made to this contact, create a default lastCallDate based on the time the reminder was created
-            return Reminder(contact, remindTimes, lastCallDate ?: Date(), id)
+            Reminder(contact, remindTimes, lastCallDate ?: Date(), id)
         } catch (e: Error) {
-            return null
+            null
         }
     }
 

@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="error_notification_channel_name">Errors</string>
     <string name="error_notification_channel_description">Notifications about any errors</string>
+    <string name="pick_a_contact">Pick a contact</string>
+    <string name="pick_at_least_one_time_to_be_reminded">Pick at least one time to be reminded</string>
 </resources>
