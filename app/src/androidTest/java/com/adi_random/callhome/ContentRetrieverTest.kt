@@ -40,7 +40,7 @@ class ContentRetrieverTest {
             if (contact != null)
                 numbers += contact
         }
-        assertThat(ids, hasSize(1))
+        assertThat(ids, hasSize(2))
     }
 
     @Test

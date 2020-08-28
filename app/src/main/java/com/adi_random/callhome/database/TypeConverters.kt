@@ -39,14 +39,18 @@ class TypeConverters {
     fun fromLongToDate(value: Long): Date = Date(value)
 
     @TypeConverter
-    fun fromBitmapToString(value: Bitmap): String {
+    fun fromBitmapToString(value: Bitmap?): String {
+        if (value == null)
+            return ""
         val byteArray = ByteArrayOutputStream()
         value.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
         return Base64.getEncoder().encodeToString(byteArray.toByteArray())
     }
 
     @TypeConverter
-    fun fromStringToBitmap(value: String): Bitmap {
+    fun fromStringToBitmap(value: String?): Bitmap? {
+        if (value == null || value == "")
+            return null
         val bytes = Base64.getDecoder().decode(value)
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }

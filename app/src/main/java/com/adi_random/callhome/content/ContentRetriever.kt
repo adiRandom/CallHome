@@ -29,6 +29,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         val contactProjection = arrayOf(
             ContactsContract.CommonDataKinds.Phone._ID,
             ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER,
+            ContactsContract.CommonDataKinds.Phone.NUMBER,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
             ContactsContract.CommonDataKinds.Phone.PHOTO_URI
         )
@@ -55,16 +56,21 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                 }
                 else -> {
                     return@withContext contactCursor.run {
-                        val contactIndex =
+                        val normalizedNumberIndex =
                             getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER)
+                        val numberIndex =
+                            getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                         val nameIndex =
                             getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                         val photoUriIndex =
                             getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
                         moveToNext()
 //                        The fields of this contact
-                        val number = getString(contactIndex)
-                        val name = getString(nameIndex)
+
+//                        If the number is standard invalid, get the number as the user typed it
+                        val number = getString(normalizedNumberIndex) ?: getString(numberIndex)
+//                        If there is no name, set the number as the contact name
+                        val name = getString(nameIndex) ?: number
                         val photoUri = getString(photoUriIndex)
                         val photoStream = getContactPhoto(Uri.parse(photoUri ?: ""))
                         val photo = BitmapFactory.decodeStream(photoStream)
@@ -186,9 +192,8 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
         }
     }
 
-    @TestOnly
     suspend fun getContactIdFromUri(uri: Uri): Long? = withContext(dispatcher) {
-        val projection = arrayOf(ContactsContract.Contacts._ID)
+        val projection = arrayOf(ContactsContract.Contacts.LOOKUP_KEY)
         val cursor = contentResolver.query(uri, projection, null, null, null)
         try {
             when (cursor?.count) {
@@ -200,15 +205,54 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
                     cursor.close(); null
                 }
                 else -> {
-                    cursor.let {
+//                   The lookup key of this contact
+                    val lookupKey = cursor.let {
                         val index =
                             cursor.getColumnIndex(
-                                ContactsContract.CommonDataKinds.Phone._ID
+                                ContactsContract.Contacts.LOOKUP_KEY
                             )
                         cursor.moveToNext()
-                        val id = cursor.getLong(index)
+                        val lookupKey = cursor.getString(index)
                         cursor.close()
-                        id
+                        lookupKey
+                    }
+
+                    // Get the contact id
+
+                    val commonDataKindsProjection = arrayOf(
+                        ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
+                        ContactsContract.CommonDataKinds.Phone._ID
+                    )
+                    val selection = "${ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY} = ?"
+                    val selectionArgs = arrayOf(lookupKey)
+                    val commonDataKindsCursor = contentResolver.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        commonDataKindsProjection,
+                        selection,
+                        selectionArgs,
+                        null
+                    )
+                    try {
+                        when (commonDataKindsCursor?.count) {
+                            null -> {
+                                commonDataKindsCursor?.close(); null
+
+                            }
+                            0 -> {
+                                commonDataKindsCursor.close(); null
+                            }
+                            else -> {
+                                val idIndex =
+                                    commonDataKindsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)
+                                commonDataKindsCursor.moveToNext()
+                                val id = commonDataKindsCursor.getLong(idIndex)
+                                commonDataKindsCursor.close()
+                                id
+                            }
+                        }
+                    } catch (e: Error) {
+                        commonDataKindsCursor?.close()
+                        null
                     }
                 }
             }
