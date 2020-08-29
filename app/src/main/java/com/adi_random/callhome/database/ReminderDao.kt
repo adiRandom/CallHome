@@ -14,7 +14,11 @@ interface ReminderDao {
 
     @Query("SELECT * FROM Reminder")
     @Transaction
-    fun getReminders(): LiveData<List<ReminderAndRemindTime>>
+    fun getRemindersAsLiveData(): LiveData<List<ReminderAndRemindTime>>
+
+    @Query("SELECT * FROM Reminder")
+    @Transaction
+    fun getReminders(): List<ReminderAndRemindTime>
 
     @Query("SELECT * FROM Reminder WHERE reminderId = :id")
     @Transaction

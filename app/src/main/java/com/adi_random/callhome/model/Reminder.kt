@@ -8,8 +8,10 @@ import androidx.room.PrimaryKey
 import com.adi_random.callhome.database.ReminderRepository
 import com.adi_random.callhome.database.models.ReminderAndRemindTime
 import com.adi_random.callhome.util.RemindTime
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 /**
@@ -17,7 +19,7 @@ import java.util.*
  */
 
 @Entity
-class Reminder(
+open class Reminder(
     @Embedded
     var contact: Contact,
 //The call date from the last reminder
@@ -39,9 +41,11 @@ class Reminder(
         contact: Contact,
         timesToRemind: List<RemindTime>,
         lastCallDate: Date,
-        reminderId: String
+        reminderId: String,
+        errorCount: Int = 0
     ) : this(contact, lastCallDate, reminderId) {
         this.timesToRemind = timesToRemind
+        this.errorCount = errorCount
 
     }
 
@@ -50,20 +54,30 @@ class Reminder(
         lastCallDate = date
     }
 
-    suspend fun countError(context: Context) = withContext(Dispatchers.IO) {
+    open suspend fun countError(context: Context) = withContext(Dispatchers.IO) {
         val repository = ReminderRepository.getInstance(context)
+        errorCount++
+        repository.updateReminder(this@Reminder)
+    }
+
+    @TestOnly
+    suspend fun countError(
+        context: Context,
+        repository: ReminderRepository,
+        dispatcher: CoroutineDispatcher
+    ) = withContext(dispatcher) {
         errorCount++
         repository.updateReminder(this@Reminder)
     }
 
 
     companion object {
-        const val JOB_KEY = "reminders"
         fun fromReminderAndRemindTime(value: ReminderAndRemindTime): Reminder = Reminder(
             value.reminder.contact,
             value.timesToRemind,
             value.reminder.lastCallDate,
-            value.reminder.reminderId
+            value.reminder.reminderId,
+            value.reminder.errorCount
         )
     }
 

@@ -14,7 +14,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val repository = ReminderRepository.getInstance(context)
 
     val reminders: LiveData<List<Reminder>> by lazy {
-        repository.getReminders().switchMap { list ->
+        repository.getRemindersAsLiveData().switchMap { list ->
             val mappedList = list.map { Reminder.fromReminderAndRemindTime(it) }
             MutableLiveData(mappedList)
         }

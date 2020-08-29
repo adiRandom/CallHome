@@ -19,7 +19,10 @@ import java.util.*
 /**
  * Created by Adrian Pascu on 19-Aug-20
  */
-class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+open class ContentRetriever(
+    ctx: Context,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
 
     private var contentResolver: ContentResolver = ctx.contentResolver
 
@@ -101,7 +104,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
      * @return Date if a valid last call was found, null otherwise
      */
     @Throws(Error::class)
-    suspend fun getLastCallDate(contact: Contact): Date? = withContext(dispatcher) {
+    open suspend fun getLastCallDate(contact: Contact): Date? = withContext(dispatcher) {
 
 
         //Get the call history for this number
@@ -153,7 +156,7 @@ class ContentRetriever(ctx: Context, private val dispatcher: CoroutineDispatcher
             }
         } catch (e: java.lang.Error) {
             logCursor?.close()
-            return@withContext null
+            throw Error("Error retrieving call log")
         }
 
     }

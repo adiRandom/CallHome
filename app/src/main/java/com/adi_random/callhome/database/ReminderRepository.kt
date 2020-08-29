@@ -25,11 +25,12 @@ class ReminderRepository {
         db.reminderDao().addReminder(reminder)
     }
 
-    fun getReminders() =
-        db.reminderDao().getReminders()
+    fun getRemindersAsLiveData() =
+        db.reminderDao().getRemindersAsLiveData()
 
 
     fun getReminderById(id: String) = db.reminderDao().getReminderById(id)
+    fun getReminders() = db.reminderDao().getReminders()
 
     fun updateReminder(reminder: Reminder) {
         db.reminderDao().updateReminder(reminder)

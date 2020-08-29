@@ -20,6 +20,9 @@ android {
             exclude 'META-INF/AL2.0'
             exclude 'META-INF/LGPL2.1'
             exclude("META-INF/*.kotlin_module")
+            exclude 'win32-x86-64/attach_hotspot_windows.dll'
+            exclude 'win32-x86/attach_hotspot_windows.dll'
+            exclude 'META-INF/licenses/ASM'
         }
         buildFeatures {
             dataBinding true
@@ -157,7 +160,10 @@ dependencies {
     implementation "androidx.work:work-gcm:$work_version"
 
     // optional - Test helpers
-    testImplementation "androidx.work:work-testing:$work_version"
+    androidTestImplementation "androidx.work:work-testing:$work_version"
 
     implementation 'com.google.android.material:material:1.2.0'
+    androidTestImplementation 'org.mockito:mockito-core:2.19.0'
+    androidTestImplementation 'org.mockito:mockito-android:3.5.6'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
 }
