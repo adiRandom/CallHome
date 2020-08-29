@@ -39,7 +39,7 @@ class AddReminderErrorDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contact_picking_error_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_alert_dialog, container, false)
     }
 
     companion object {
