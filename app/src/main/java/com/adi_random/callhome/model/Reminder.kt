@@ -25,7 +25,7 @@ open class Reminder(
 //The call date from the last reminder
     var lastCallDate: Date,
     @PrimaryKey
-    var reminderId: String
+    var reminderId: Long
 ) {
 
     @Ignore
@@ -41,7 +41,7 @@ open class Reminder(
         contact: Contact,
         timesToRemind: List<RemindTime>,
         lastCallDate: Date,
-        reminderId: String,
+        reminderId: Long,
         errorCount: Int = 0
     ) : this(contact, lastCallDate, reminderId) {
         this.timesToRemind = timesToRemind
@@ -57,7 +57,7 @@ open class Reminder(
     open suspend fun countError(context: Context) = withContext(Dispatchers.IO) {
         val repository = ReminderRepository.getInstance(context)
         errorCount++
-        repository.updateReminder(this@Reminder)
+        repository.countError(reminderId)
     }
 
     @TestOnly
@@ -67,7 +67,7 @@ open class Reminder(
         dispatcher: CoroutineDispatcher
     ) = withContext(dispatcher) {
         errorCount++
-        repository.updateReminder(this@Reminder)
+        repository.countError(reminderId)
     }
 
 

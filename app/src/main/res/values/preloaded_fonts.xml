@@ -2,5 +2,9 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/fanwood_text</item>
+        <item>@font/kurale</item>
+        <item>@font/quando</item>
+        <item>@font/source_code_pro</item>
+        <item>@font/source_code_pro_bold</item>
     </array>
 </resources>

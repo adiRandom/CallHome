@@ -27,7 +27,7 @@ class RemindTime(
 
     val timeToRemind: Int,
     val type: ReminderType,
-    val reminderId: String,
+    val reminderId: Long,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 ) {

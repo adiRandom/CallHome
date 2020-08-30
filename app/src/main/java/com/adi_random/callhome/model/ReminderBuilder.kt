@@ -19,7 +19,7 @@ class ReminderBuilder(
     private var contact: Contact = EMPTY_CONTACT
     private var type = ReminderType.WEEKLY
     private var timesToRemind = emptyList<Int>()
-    private var id: String = UUID.randomUUID().toString()
+    private var id: Long = UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
 
     fun withContact(contact: Contact?): ReminderBuilder {
         if (contact != null)
@@ -40,7 +40,7 @@ class ReminderBuilder(
         return this
     }
 
-    fun withId(id: String?): ReminderBuilder {
+    fun withId(id: Long?): ReminderBuilder {
         if (id != null)
             this.id = id
         return this

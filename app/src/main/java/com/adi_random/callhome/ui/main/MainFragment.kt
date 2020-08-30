@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.adi_random.callhome.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.adi_random.callhome.databinding.MainFragmentBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderErrorDialog
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
 import com.adi_random.callhome.ui.main.addreminder.AddReminderViewModel
@@ -18,13 +19,16 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainFragmentViewModel by viewModels()
     private val createReminderViewModel: AddReminderViewModel by activityViewModels()
+    private lateinit var binding: MainFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        binding = MainFragmentBinding.inflate(inflater, container, false)
 
 //        Listen to errors from the creation of reminders
 
@@ -40,11 +44,26 @@ class MainFragment : Fragment() {
                     )
         }
 
-        viewModel.reminders.observe(viewLifecycleOwner) {
-//            TODO: Bind
+        //Create recycler view
+        val layoutManager = object : LinearLayoutManager(requireContext()) {
+            override fun supportsPredictiveItemAnimations(): Boolean {
+                return true
+            }
         }
 
-        return inflater.inflate(R.layout.main_fragment, container, false)
+        binding.reminders.apply {
+            adapter = viewModel.reminderAdapter
+            this.layoutManager = layoutManager
+        }
+
+        viewModel.reminders.observe(viewLifecycleOwner) {
+            viewModel.reminderAdapter.apply {
+                reminders = it
+                notifyDataSetChanged()
+            }
+        }
+
+        return binding.root
     }
 
 

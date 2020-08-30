@@ -1,6 +1,9 @@
 package com.adi_random.callhome.database
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import com.adi_random.callhome.model.Reminder
 import org.jetbrains.annotations.TestOnly
 
@@ -25,15 +28,22 @@ class ReminderRepository {
         db.reminderDao().addReminder(reminder)
     }
 
-    fun getRemindersAsLiveData() =
-        db.reminderDao().getRemindersAsLiveData()
+    fun getRemindersAsLiveData(): LiveData<List<Reminder>> =
+        db.reminderDao().getRemindersAsLiveData().switchMap {
+            MutableLiveData(it.map(Reminder::fromReminderAndRemindTime))
+        }
 
 
-    fun getReminderById(id: String) = db.reminderDao().getReminderById(id)
+    fun getReminderById(id: Long) = db.reminderDao().getReminderById(id)
     fun getReminders() = db.reminderDao().getReminders()
 
-    fun updateReminder(reminder: Reminder) {
-        db.reminderDao().updateReminder(reminder)
+    fun countError(reminderId: Long) {
+        db.reminderDao().countError(reminderId)
+    }
+
+    fun deleteReminder(reminder: Reminder) {
+        db.remindTimeDao().deleteAll(reminder.timesToRemind)
+        db.reminderDao().deleteReminder(reminder)
     }
 
     companion object {

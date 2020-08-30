@@ -16,7 +16,7 @@ import com.adi_random.callhome.util.RemindTime
 class Database private constructor() {
     @androidx.room.Database(
         entities = [Reminder::class, RemindTime::class],
-        version = 5,
+        version = 6,
         exportSchema = false,
     )
 

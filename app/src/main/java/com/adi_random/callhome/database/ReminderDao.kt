@@ -22,12 +22,18 @@ interface ReminderDao {
 
     @Query("SELECT * FROM Reminder WHERE reminderId = :id")
     @Transaction
-    fun getReminderById(id: String): ReminderAndRemindTime
+    fun getReminderById(id: Long): ReminderAndRemindTime
 
     @Insert
     fun addReminder(reminder: Reminder)
 
     @Update
     fun updateReminder(reminder: Reminder)
+
+    @Query("UPDATE Reminder SET errorCount = errorCount + 1 WHERE reminderId = :reminderId")
+    fun countError(reminderId: Long)
+
+    @Delete
+    fun deleteReminder(reminder: Reminder)
 
 }

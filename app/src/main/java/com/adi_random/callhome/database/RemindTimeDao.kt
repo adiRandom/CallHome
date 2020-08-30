@@ -1,6 +1,7 @@
 package com.adi_random.callhome.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import com.adi_random.callhome.util.RemindTime
 
@@ -13,4 +14,7 @@ import com.adi_random.callhome.util.RemindTime
 interface RemindTimeDao {
     @Insert
     fun insertAll(values: List<RemindTime>)
+
+    @Delete
+    fun deleteAll(values: List<RemindTime>)
 }
