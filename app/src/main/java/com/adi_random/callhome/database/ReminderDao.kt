@@ -12,11 +12,11 @@ import com.adi_random.callhome.model.Reminder
 @Dao
 interface ReminderDao {
 
-    @Query("SELECT * FROM Reminder")
+    @Query("SELECT * FROM Reminder ORDER BY creationDate DESC")
     @Transaction
     fun getRemindersAsLiveData(): LiveData<List<ReminderAndRemindTime>>
 
-    @Query("SELECT * FROM Reminder")
+    @Query("SELECT * FROM Reminder ")
     @Transaction
     fun getReminders(): List<ReminderAndRemindTime>
 

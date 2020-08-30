@@ -21,7 +21,7 @@ class ReminderAdapter(
     }
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
-        holder.bind(reminders.get(position)) {
+        holder.bind(reminders[position]) {
             delete(position)
         }
     }

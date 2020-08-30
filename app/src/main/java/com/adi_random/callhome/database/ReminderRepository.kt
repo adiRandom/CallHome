@@ -30,7 +30,9 @@ class ReminderRepository {
 
     fun getRemindersAsLiveData(): LiveData<List<Reminder>> =
         db.reminderDao().getRemindersAsLiveData().switchMap {
-            MutableLiveData(it.map(Reminder::fromReminderAndRemindTime))
+            MutableLiveData(
+                it.map(Reminder::fromReminderAndRemindTime)
+            )
         }
 
 

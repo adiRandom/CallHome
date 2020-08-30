@@ -25,7 +25,8 @@ open class Reminder(
 //The call date from the last reminder
     var lastCallDate: Date,
     @PrimaryKey
-    var reminderId: Long
+    var reminderId: Long,
+    val creationDate: Date = Date()
 ) {
 
     @Ignore
@@ -42,8 +43,9 @@ open class Reminder(
         timesToRemind: List<RemindTime>,
         lastCallDate: Date,
         reminderId: Long,
-        errorCount: Int = 0
-    ) : this(contact, lastCallDate, reminderId) {
+        errorCount: Int = 0,
+        creationDate: Date = Date()
+    ) : this(contact, lastCallDate, reminderId, creationDate) {
         this.timesToRemind = timesToRemind
         this.errorCount = errorCount
 
@@ -77,7 +79,8 @@ open class Reminder(
             value.timesToRemind,
             value.reminder.lastCallDate,
             value.reminder.reminderId,
-            value.reminder.errorCount
+            value.reminder.errorCount,
+            value.reminder.creationDate
         )
     }
 
