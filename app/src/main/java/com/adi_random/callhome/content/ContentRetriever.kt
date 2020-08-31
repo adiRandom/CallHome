@@ -89,13 +89,11 @@ open class ContentRetriever(
         }
     }
 
-    private fun getContactPhoto(uri: Uri?): InputStream? {
-        try {
-            if (uri != null)
-                return contentResolver.openAssetFileDescriptor(uri, "r")?.createInputStream()
-            return null
+    private fun getContactPhoto(uri: Uri): InputStream? {
+        return try {
+            contentResolver.openAssetFileDescriptor(uri, "r")?.createInputStream()
         } catch (e: IOException) {
-            return null
+            null
         }
     }
 

@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.ReminderItemBinding
 import com.adi_random.callhome.model.Reminder
 import com.adi_random.callhome.ui.main.addreminder.ReminderType
@@ -31,8 +32,12 @@ class ReminderViewHolder(val binding: ReminderItemBinding) : RecyclerView.ViewHo
 
         @JvmStatic
         @BindingAdapter("src")
-        fun setImageSrc(view: ImageView, value: Bitmap) {
-            view.setImageBitmap(value)
+        fun setImageSrc(view: ImageView, value: Bitmap?) {
+            if (value != null)
+                view.setImageBitmap(value)
+            else {
+                view.setImageResource(R.drawable.ic_baseline_person_32)
+            }
         }
     }
 }
