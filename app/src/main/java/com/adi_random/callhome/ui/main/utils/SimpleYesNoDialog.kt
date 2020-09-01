@@ -1,4 +1,4 @@
-package com.adi_random.callhome.ui.main
+package com.adi_random.callhome.ui.main.utils
 
 import android.app.AlertDialog
 import android.app.Dialog

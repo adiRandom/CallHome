@@ -1,10 +1,11 @@
-package com.adi_random.callhome.ui.main
+package com.adi_random.callhome.ui.main.reminders
 
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.widget.RecyclerView
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.ReminderItemBinding
@@ -17,9 +18,22 @@ import java.util.*
  * Created by Adrian Pascu on 30-Aug-20
  */
 class ReminderViewHolder(val binding: ReminderItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(reminder: Reminder?, delete: () -> Unit) {
+    fun bind(reminder: Reminder?, isActivated: Boolean, delete: () -> Unit) {
         binding.model = ReminderViewModel(reminder, delete)
+        binding.root.isActivated = isActivated
     }
+
+    fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+        object : ItemDetailsLookup.ItemDetails<Long>() {
+            override fun getPosition(): Int {
+                return adapterPosition
+            }
+
+            override fun getSelectionKey(): Long? {
+                return binding.model?.reminder?.reminderId
+            }
+
+        }
 
     companion object {
         @JvmStatic

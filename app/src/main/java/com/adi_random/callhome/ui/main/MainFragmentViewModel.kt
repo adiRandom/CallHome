@@ -14,12 +14,10 @@ class MainFragmentViewModel(app: Application) : AndroidViewModel(app) {
 
     private val context = app.applicationContext
     private val repository = ReminderRepository.getInstance(context)
-    val reminderAdapter by lazy {
-        ReminderAdapter(reminders.value ?: emptyList()) {
-            deletingReminder.value = it
-        }.apply {
-            setHasStableIds(true)
-        }
+
+    //    The position of the reminder to be deleted or -1 if no reminder gets deleted
+    fun notifyDeletingReminder(pos: Int) {
+        deletingReminder.value = pos
     }
 
 

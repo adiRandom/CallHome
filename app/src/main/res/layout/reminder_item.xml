@@ -4,16 +4,17 @@
 
     <data>
 
-        <import type="com.adi_random.callhome.ui.main.ReminderViewModel" />
+        <import type="com.adi_random.callhome.ui.main.reminders.ReminderViewModel" />
 
         <variable
             name="model"
-            type="ReminderViewModel" />
+            type="com.adi_random.callhome.ui.main.reminders.ReminderViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/reminder_selected_background">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/contact_image_wrapper"
@@ -74,13 +75,13 @@
         </LinearLayout>
 
         <ImageButton
-            android:onClick="@{model.delete}"
             android:id="@+id/delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="4dp"
             android:background="#00FFFFFF"
+            android:onClick="@{model.delete}"
             android:tint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/contact_image_wrapper"
             app:layout_constraintEnd_toEndOf="parent"

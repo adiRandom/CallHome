@@ -16,6 +16,7 @@ import androidx.work.WorkManager
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.MainActivityBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
+import com.adi_random.callhome.ui.main.utils.CallLogPermissionDialog
 import com.adi_random.callhome.worker.CallHistoryWatchWorker
 import java.util.concurrent.TimeUnit
 

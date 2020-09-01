@@ -7,22 +7,35 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.selection.SelectionPredicates
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StableIdKeyProvider
+import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adi_random.callhome.databinding.MainFragmentBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderErrorDialog
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
 import com.adi_random.callhome.ui.main.addreminder.AddReminderViewModel
+import com.adi_random.callhome.ui.main.reminders.ItemDetailsLookupImpl
+import com.adi_random.callhome.ui.main.reminders.ReminderAdapter
+import com.adi_random.callhome.ui.main.utils.ReminderTimesDialog
+import com.adi_random.callhome.ui.main.utils.SimpleYesNoDialog
 
 class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
         const val DELETE_REMINDER_DIALOG_TAG = "delete_reminder_dialog"
+
+        //        The selection id for the recyclerview selection tracker
+        const val SELECTION_ID = "selection"
+        const val REMIND_TIMES_DIALOG_TAG = "remind_times_dialog"
     }
 
     private val viewModel: MainFragmentViewModel by viewModels()
     private val createReminderViewModel: AddReminderViewModel by activityViewModels()
     private lateinit var binding: MainFragmentBinding
+    private lateinit var selectionTracker: SelectionTracker<Long>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,22 +58,63 @@ class MainFragment : Fragment() {
                     )
         }
 
+
         //Create recycler view
+
+        val reminderAdapter by lazy {
+            ReminderAdapter(viewModel.reminders.value ?: emptyList()) {
+                viewModel.notifyDeletingReminder(it)
+            }.apply {
+                setHasStableIds(true)
+            }
+        }
+
         val layoutManager = object : LinearLayoutManager(requireContext()) {
             override fun supportsPredictiveItemAnimations(): Boolean {
                 return true
             }
         }
 
+
         binding.reminders.apply {
-            adapter = viewModel.reminderAdapter
+            adapter = reminderAdapter
             this.layoutManager = layoutManager
         }
+
+        //Create the selection tracker for the reminders list
+        selectionTracker = SelectionTracker.Builder<Long>(
+            SELECTION_ID,
+            binding.reminders,
+            StableIdKeyProvider(binding.reminders),
+            ItemDetailsLookupImpl(binding.reminders),
+            StorageStrategy.createLongStorage()
+        )
+            .withSelectionPredicate(SelectionPredicates.createSelectSingleAnything())
+            .build()
+
+        selectionTracker.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onSelectionChanged() {
+                super.onSelectionChanged()
+                if (!selectionTracker.selection.isEmpty) {
+                    val reminderId = selectionTracker.selection.iterator().next()
+                    val reminder = viewModel.reminders.value?.find {
+                        it.reminderId == reminderId
+                    }
+                    ReminderTimesDialog.newInstance(reminder).show(
+                        childFragmentManager,
+                        REMIND_TIMES_DIALOG_TAG
+                    )
+                }
+            }
+        })
+
+//        Add to the adapter
+        reminderAdapter.tracker = selectionTracker
 
 
         //Observing the reminder list
         viewModel.reminders.observe(viewLifecycleOwner) {
-            viewModel.reminderAdapter.apply {
+            reminderAdapter.apply {
                 reminders = it
                 notifyDataSetChanged()
             }
@@ -76,6 +130,7 @@ class MainFragment : Fragment() {
                     viewModel.deleteReminder(it)
                 }.show(childFragmentManager, DELETE_REMINDER_DIALOG_TAG)
         }
+
 
         return binding.root
     }

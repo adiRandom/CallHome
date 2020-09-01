@@ -80,6 +80,44 @@ class RemindTime(
         return Date.from(executionTime.nextExecution(lastExecution).get().toInstant())
     }
 
+    override fun toString(): String {
+        return when (type) {
+            ReminderType.DAILY -> {
+                val hour =
+                    if (timeToRemind / 100 < 10) "0${timeToRemind / 100}"; else timeToRemind / 100
+                val minute =
+                    if (timeToRemind % 100 < 10) "0${timeToRemind % 100}"; else timeToRemind % 100
+                "At $hour:$minute every day"
+            }
+            ReminderType.WEEKLY -> {
+                val day: String = when (timeToRemind) {
+                    1 -> "Monday"
+                    2 -> "Tuesday"
+                    3 -> "Wednesday"
+                    4 -> "Thursday"
+                    5 -> "Friday"
+                    6 -> "Saturday"
+                    7 -> "Sunday"
+                    else -> ""
+                }
+                "Every $day"
+            }
+            ReminderType.MONTHLY -> {
+                val day = when (timeToRemind) {
+                    1 -> "1st"
+                    2 -> "2nd"
+                    3 -> "3rd"
+                    21 -> "21st"
+                    22 -> "22nd"
+                    23 -> "23rd"
+                    31 -> "31st"
+                    else -> "${timeToRemind}th"
+                }
+                "The $day of every month"
+            }
+        }
+    }
+
     @TestOnly
     fun _getId(): Int {
         return id
