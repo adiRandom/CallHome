@@ -24,8 +24,7 @@ class ReminderAdapter(
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
         holder.bind(
-            reminders[position],
-            tracker?.isSelected(reminders[position].reminderId) ?: false
+            reminders[position]
         ) {
             delete(position)
         }

@@ -16,5 +16,7 @@ class ReminderTimesViewHolder(private val view: View) : RecyclerView.ViewHolder(
             if (value != null)
                 text = value
         }
+
+
     }
 }

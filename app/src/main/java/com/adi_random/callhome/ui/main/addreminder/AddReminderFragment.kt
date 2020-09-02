@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.FragmentAddReminderListDialogBinding
+import com.adi_random.callhome.ui.main.utils.ContactPickingErrorDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
@@ -82,7 +83,7 @@ class AddReminderFragment : BottomSheetDialogFragment() {
         //Bind the add time button
         binding.addTimeButton.setOnClickListener {
             TimePopupFragment.newInstance(viewModel.getReminderType().value!!)
-                .setCallback(object : ITimePipupCallback {
+                .setCallback(object : ITimePopupCallback {
                     override fun onTimePicked(hour: Int, minute: Int) {
                         viewModel.addTimeToRemind(hour, minute)
                     }

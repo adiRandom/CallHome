@@ -18,9 +18,11 @@ import java.util.*
  * Created by Adrian Pascu on 30-Aug-20
  */
 class ReminderViewHolder(val binding: ReminderItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(reminder: Reminder?, isActivated: Boolean, delete: () -> Unit) {
+
+
+    fun bind(reminder: Reminder?, delete: () -> Unit) {
         binding.model = ReminderViewModel(reminder, delete)
-        binding.root.isActivated = isActivated
+
     }
 
     fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =

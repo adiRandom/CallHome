@@ -12,9 +12,12 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="?attr/selectableItemBackground"
+        android:backgroundTint="@android:color/holo_blue_bright"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/reminder_selected_background">
+        android:paddingLeft="4dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/contact_image_wrapper"

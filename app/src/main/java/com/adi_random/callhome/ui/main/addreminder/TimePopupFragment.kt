@@ -17,14 +17,14 @@ const val ARG_TYPE = "type"
 
 class TimePopupFragment : DialogFragment() {
     private lateinit var type: ReminderType
-    private lateinit var callback: ITimePipupCallback
+    private lateinit var callback: ITimePopupCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         type = ReminderType.getReminderTypeFromInt(requireArguments().getInt(ARG_TYPE))
     }
 
-    fun setCallback(callback: ITimePipupCallback):TimePopupFragment{
+    fun setCallback(callback: ITimePopupCallback): TimePopupFragment {
         this.callback = callback
         return this
     }
