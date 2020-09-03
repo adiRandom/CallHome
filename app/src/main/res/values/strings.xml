@@ -8,4 +8,22 @@
     <string name="pick_at_least_one_time_to_be_reminded">Pick at least one time to be reminded</string>
     <string name="no_permissions_message">You need to grant access to your call history. Restart the app to be prompted again to grant the permission or go to Setting to grant it manually</string>
     <string name="contact_photo">Contact photo</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="weekly_reminders_time_key">weekly_reminders_time_key</string>
+    <string name="monthly_reminders_time_key">monthly_reminders_time_key</string>
 </resources>

@@ -4,20 +4,26 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.MainActivityBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
 import com.adi_random.callhome.ui.main.utils.CallLogPermissionDialog
+import com.adi_random.callhome.ui.settings.SettingsActivity
 import com.adi_random.callhome.worker.CallHistoryWatchWorker
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val ERROR_NOTIFICATION_CHANNEL = "error_notification-channel"
@@ -59,6 +65,13 @@ class MainActivity : AppCompatActivity() {
 
         checkCallLogPermission()
 
+//        TODO: Remove test
+        //Listen for settings change
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+                if (key == getString(R.string.weekly_reminders_time_key))
+                    Log.d("Preference value", Date(sharedPreferences.getLong(key, 0)).toString())
+            }
     }
 
     fun showAddReminderModal(view: View) {
@@ -68,6 +81,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.appbar_menu, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings_menu_item -> {
+//                Show the settings activity
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     fun showEducationalUi() {
