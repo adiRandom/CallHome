@@ -23,10 +23,14 @@ class ReminderAdapter(
     }
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
+        val reminder = reminders[position]
         holder.bind(
-            reminders[position]
+            reminder
         ) {
             delete(position)
+        }
+        if (reminder.hasError) {
+//            reminder.hasError = false
         }
     }
 

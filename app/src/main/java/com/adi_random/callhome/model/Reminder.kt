@@ -32,6 +32,10 @@ open class Reminder(
     @Ignore
     var timesToRemind: List<RemindTime> = emptyList()
 
+    @Ignore
+//    Flag to notify if error graphics should be displayed
+    var hasError: Boolean = false
+
     /**
      *  If there is an error with this reminder (retrieving the contact, the last call date, etc.) count it
      *  If it reaches a threshold of 5, prompt the user to remove the reminder
@@ -64,7 +68,6 @@ open class Reminder(
 
     @TestOnly
     suspend fun countError(
-        context: Context,
         repository: ReminderRepository,
         dispatcher: CoroutineDispatcher
     ) = withContext(dispatcher) {

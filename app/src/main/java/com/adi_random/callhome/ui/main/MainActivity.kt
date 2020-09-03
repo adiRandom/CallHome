@@ -28,12 +28,13 @@ class MainActivity : AppCompatActivity() {
         const val AddReminderModalTag = "add_reminder_modal"
 
         //        The id of the reminder that has an error
-        const val ReminderErrorIdParam = "reminder_error_param"
+        const val ReminderErrorIdExtra = "reminder_error_param"
 
         const val PermissionEducationalUiTag = "educational_ui"
     }
 
     private lateinit var binding: MainActivityBinding
+    private var errorReminderId: Long? = null
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
@@ -51,6 +52,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         createNotificationChannels()
+
+        //Check if the activity started due to a reminder error
+        //Get the reminder id and pass it to the fragment
+
+        if (intent.hasExtra(ReminderErrorIdExtra))
+            errorReminderId = intent.getLongExtra(ReminderErrorIdExtra, 0)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, MainFragmentNoPermissions.newInstance())
@@ -109,13 +116,13 @@ class MainActivity : AppCompatActivity() {
     private fun registerWorker() {
         //Register worker
         val workRequest =
-            PeriodicWorkRequestBuilder<CallHistoryWatchWorker>(5, TimeUnit.MINUTES).build()
+            PeriodicWorkRequestBuilder<CallHistoryWatchWorker>(15, TimeUnit.MINUTES).build()
         WorkManager.getInstance(this).enqueue(workRequest)
     }
 
     private fun onPermissionGranted() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, MainFragment.newInstance())
+            .replace(R.id.fragment_container, MainFragment.newInstance(errorReminderId))
             .addToBackStack(null)
             .commit()
         registerWorker()
