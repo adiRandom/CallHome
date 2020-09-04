@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import com.adi_random.callhome.model.Reminder
 import org.jetbrains.annotations.TestOnly
+import java.util.*
 
 
 /**
@@ -41,6 +42,10 @@ class ReminderRepository {
 
     fun countError(reminderId: Long) {
         db.reminderDao().countError(reminderId)
+    }
+
+    fun callMade(reminderId: Long, date: Date) {
+        db.reminderDao().callMade(reminderId, date)
     }
 
     fun deleteReminder(reminder: Reminder) {

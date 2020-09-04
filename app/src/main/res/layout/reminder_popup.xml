@@ -75,8 +75,8 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="6dp"
             android:id="@+id/reminder_times"
             android:layout_width="match_parent"
             android:layout_height="0dp"

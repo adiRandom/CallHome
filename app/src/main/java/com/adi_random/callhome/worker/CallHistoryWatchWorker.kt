@@ -3,6 +3,9 @@ package com.adi_random.callhome.worker
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
@@ -13,6 +16,7 @@ import com.adi_random.callhome.database.ReminderRepository
 import com.adi_random.callhome.model.Reminder
 import com.adi_random.callhome.ui.main.ERROR_NOTIFICATION_CHANNEL
 import com.adi_random.callhome.ui.main.MainActivity
+import com.adi_random.callhome.ui.main.REMINDERS_NOTIFICATION_CHANNEL
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -60,6 +64,8 @@ class CallHistoryWatchWorker(
 
     override suspend fun doWork(): Result {
 
+        Log.d("Worker status", "Running")
+
         val reminders = repository.getReminders().map(Reminder::fromReminderAndRemindTime)
         for (reminder in reminders) {
             GlobalScope.launch(dispatcher) {
@@ -98,7 +104,7 @@ class CallHistoryWatchWorker(
 
                 //Get the date of the last placed call to that number
                 try {
-                    val date = contentRetriever.getLastCallDate(reminder.contact)
+                    val lastCallPlaced = contentRetriever.getLastCallDate(reminder.contact)
 
                     for (remindTime in reminder.timesToRemind) {
                         launch {
@@ -106,25 +112,76 @@ class CallHistoryWatchWorker(
                                 remindTime.calculateNextExecution(
                                     reminder.lastCallDate
                                 )
-                            if (date != null && date >= nextCallDate) {
+                            if (lastCallPlaced != null && lastCallPlaced >= nextCallDate) {
                                 //  Next call was made
-                                reminder.madeCall(date)
+                                reminder.madeCall(lastCallPlaced)
+//                                Update the database
+                                repository.callMade(reminder.reminderId, lastCallPlaced)
 
-                            } else if (Date() >= nextCallDate) {
-                                val calendar = Calendar.getInstance()
-//                        Get what day is today
-                                val today = calendar.get(Calendar.DAY_OF_MONTH)
+                            } else if (Date() /*now*/ >= nextCallDate) {
 
-                                //Get the day the next call should be placed
-                                calendar.time = nextCallDate
-                                val nextCallDay = calendar.get(Calendar.DAY_OF_MONTH)
+//                                val calendar = Calendar.getInstance()
+////                        Get what day is today
+//                                val today = calendar.get(Calendar.DAY_OF_MONTH)
+//
+//                                //Get the day the next call should be placed
+//                                calendar.time = nextCallDate
+//                                val nextCallDay = calendar.get(Calendar.DAY_OF_MONTH)
 
-                                if (today == nextCallDay) {
+//                                Calculate dif between the day the next call should be placed and today.
+//                                If dif smaller than 24h, the call should be placed today
+
+                                if (Date().time - nextCallDate.time <= 86400000 /*Number of ms in 24h*/) {
                                     //The next call should be placed
-//                            TODO: Notify user to place call
+//                                    Create a intent to show the phone dialer
+                                    val intent = Intent(
+                                        Intent.ACTION_DIAL,
+                                        Uri.parse("tel:${reminder.contact.phoneNumber}")
+                                    )
+                                    val pendingIntent =
+                                        PendingIntent.getActivity(applicationContext, 0, intent, 0)
+
+                                    val notificationGroup = "REMINDERS_GROUP"
+
+                                    val notificationBuilder = NotificationCompat.Builder(
+                                        applicationContext,
+                                        REMINDERS_NOTIFICATION_CHANNEL
+                                    )
+                                        .setSmallIcon(R.drawable.ic_baseline_contacts_24)
+                                        .setContentTitle("Make a call")
+                                        .setContentText("It's time to call ${reminder.contact.name}")
+                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                        .setGroup(notificationGroup)
+                                        .setContentIntent(pendingIntent)
+                                    with(NotificationManagerCompat.from(applicationContext)) {
+                                        notify(Random().nextInt(), notificationBuilder.build())
+                                    }
+
                                 } else {
                                     //The next call was missed
-//                            TODO: Notify user they missed to place a call
+//                                    Create a intent to show the phone dialer
+                                    val intent = Intent(
+                                        Intent.ACTION_DIAL,
+                                        Uri.parse("tel:${reminder.contact.phoneNumber}")
+                                    )
+                                    val pendingIntent =
+                                        PendingIntent.getActivity(applicationContext, 0, intent, 0)
+
+                                    val notificationGroup = "REMINDERS_GROUP"
+
+                                    val notificationBuilder = NotificationCompat.Builder(
+                                        applicationContext,
+                                        REMINDERS_NOTIFICATION_CHANNEL
+                                    )
+                                        .setSmallIcon(R.drawable.ic_baseline_contacts_24)
+                                        .setContentTitle("Make a call")
+                                        .setContentText("You missed your last call to ${reminder.contact.name}")
+                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                        .setGroup(notificationGroup)
+                                        .setContentIntent(pendingIntent)
+                                    with(NotificationManagerCompat.from(applicationContext)) {
+                                        notify(Random().nextInt(), notificationBuilder.build())
+                                    }
                                 }
                             }
                         }

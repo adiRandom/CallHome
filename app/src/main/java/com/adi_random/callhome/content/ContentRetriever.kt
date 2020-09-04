@@ -139,7 +139,7 @@ open class ContentRetriever(
                         logCursor.getColumnIndex(CallLog.Calls.DATE)
                     val callTypeIndex = logCursor.getColumnIndex(CallLog.Calls.TYPE)
                     while (logCursor.moveToNext()) {
-                        val callType = logCursor.getType(callTypeIndex)
+                        val callType = logCursor.getInt(callTypeIndex)
                         if (CallLog.Calls.OUTGOING_TYPE == callType || callType == CallLog.Calls.INCOMING_TYPE) {
 //                            First valid call
                             val time = logCursor.getLong(dateIndex)

@@ -2,6 +2,7 @@ package com.adi_random.callhome.ui.main.utils
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,21 @@ class ReminderTimesDialog(private val reminder: Reminder?) : DialogFragment() {
         return inflater.inflate(R.layout.fragment_alert_dialog, container, false)
     }
 
+    private var callback: () -> Unit = {
+
+    }
+
+    fun setCallback(_callback: () -> Unit): ReminderTimesDialog {
+        callback = _callback
+        return this
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        callback()
+        super.onDismiss(dialog)
+    }
+
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = ReminderPopupBinding.inflate(layoutInflater, null, false)
         binding.reminder = reminder
@@ -36,9 +52,11 @@ class ReminderTimesDialog(private val reminder: Reminder?) : DialogFragment() {
         return AlertDialog.Builder(context)
             .setView(binding.root)
             .setPositiveButton("OK") { _, _ ->
+                callback()
                 dismiss()
             }
             .create()
+
     }
 
     companion object {
