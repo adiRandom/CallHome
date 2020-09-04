@@ -73,8 +73,8 @@ class CreateReminderTest {
 
         val reminderBuilder = ReminderBuilder(context, dispatcher)
 
-        val weeklyReminderId = UUID.randomUUID().toString()
-        val dailyReminderId = UUID.randomUUID().toString()
+        val weeklyReminderId = UUID.randomUUID().mostSignificantBits
+        val dailyReminderId = UUID.randomUUID().mostSignificantBits
 
 //        Monday and friday
         val weeklyReminderTimesToRemindInt = listOf(1, 5)

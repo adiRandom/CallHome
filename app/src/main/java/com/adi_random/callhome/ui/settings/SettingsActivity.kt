@@ -33,6 +33,7 @@ class SettingsActivity : AppCompatActivity() {
 
             if (preference is TimePickerPreference) {
                 val dialog = TimePickerPreferenceDialog.newInstance(preference.getKey())
+                dialog.setTargetFragment(this, 0)
                 dialog.show(parentFragmentManager, TimePickerPreferenceDialog.DIALOG_TAG)
             } else {
                 super.onDisplayPreferenceDialog(preference)

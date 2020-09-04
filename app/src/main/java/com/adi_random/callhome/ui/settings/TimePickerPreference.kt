@@ -3,9 +3,7 @@ package com.adi_random.callhome.ui.settings
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
-import android.widget.TimePicker
 import androidx.preference.DialogPreference
-import androidx.preference.PreferenceViewHolder
 import com.adi_random.callhome.R
 import java.util.*
 
@@ -15,46 +13,47 @@ import java.util.*
  */
 class TimePickerPreference(context: Context, attr: AttributeSet) : DialogPreference(context, attr) {
 
+    companion object {
+        fun getDefaultValue(): Long {
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.HOUR_OF_DAY, 9)
+            calendar.set(Calendar.MINUTE, 0)
+
+            return calendar.time.time
+        }
+    }
+
+    private val calendar = Calendar.getInstance()
+
     init {
+        isPersistent = true
         dialogLayoutResource = R.layout.time_picker_preference
         setPositiveButtonText(android.R.string.ok)
         setNegativeButtonText(android.R.string.cancel)
+
+
+        calendar.time = Date(getDefaultValue())
+
+        title = "Pick a time"
     }
 
-
-    private val calendar = Calendar.getInstance()
-    private var timePicker: TimePicker? = null
-
-    //    Get a reference to the TimePicker
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
-        super.onBindViewHolder(holder)
-        holder?.itemView?.findViewById<TimePicker>(R.id.time_picker).apply {
-            if (this != null) {
-                timePicker = this
-                setIs24HourView(true)
-                hour = this@TimePickerPreference.calendar.get(Calendar.HOUR_OF_DAY)
-                minute = this@TimePickerPreference.calendar.get(Calendar.MINUTE)
-
-//                Listen for input
-                setOnTimeChangedListener { _, hourOfDay, minute ->
-                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                    calendar.set(Calendar.MINUTE, minute)
-                }
-            }
-        }
-    }
 
     override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
         return a?.getString(index) ?: ""
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
-        val now = Date()
-        val persistedValue = getPersistedLong(now.time)
-        calendar.time = now
+        val persistedValue = getPersistedLong(0)
 
-        if (shouldPersist())
-            persistLong(now.time)
+
+        if (persistedValue == 0L) {
+//            Not set yet
+            persistLong(getDefaultValue())
+            calendar.time = Date(getDefaultValue())
+        } else {
+            calendar.time = Date(persistedValue)
+        }
+
     }
 
     override fun getSummary(): CharSequence {
@@ -66,5 +65,12 @@ class TimePickerPreference(context: Context, attr: AttributeSet) : DialogPrefere
         return "$hour:$minute"
     }
 
+    fun setTime(value: Date) {
+        calendar.time = value
+        persistLong(value.time)
+        notifyChanged()
+    }
+
+    fun getTime(): Date = calendar.time
 
 }
