@@ -1,6 +1,7 @@
 package com.adi_random.callhome.ui.main.reminders
 
 import android.graphics.Bitmap
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.widget.ImageView
@@ -29,9 +30,17 @@ class ReminderViewHolder(val binding: ReminderItemBinding) : RecyclerView.ViewHo
         if (reminder?.hasError == true) {
 //            Animate the background
 
-            binding.reminderItemRoot.setBackgroundResource(R.drawable.error_light_transition)
+            //Create the background drawable
+
+            val white = -0x1
+            val red = 0x428E0101
+
+            val drawables = arrayOf(ColorDrawable(white), ColorDrawable(red))
+            val transitionDrawable = TransitionDrawable(drawables)
+
+            binding.reminderItemRoot.background = transitionDrawable
             GlobalScope.launch {
-                val animationDuration = 300
+                val animationDuration = 400
                 (binding.reminderItemRoot.background as TransitionDrawable).apply {
                     delay(500)
                     startTransition(animationDuration)
