@@ -5,13 +5,15 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
         android:id="@+id/reminder_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/quando"
         android:text="TextView"
+        android:textColor="#424242"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

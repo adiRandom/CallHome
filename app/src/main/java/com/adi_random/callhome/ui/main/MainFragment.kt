@@ -119,7 +119,9 @@ class MainFragment : Fragment() {
                     val reminder = viewModel.reminders.value?.find {
                         it.reminderId == reminderId
                     }
-                    ReminderTimesDialog.newInstance(reminder).show(
+                    ReminderTimesDialog.newInstance(reminder).setCallback {
+                        selectionTracker.clearSelection()
+                    }.show(
                         childFragmentManager,
                         REMIND_TIMES_DIALOG_TAG
                     )

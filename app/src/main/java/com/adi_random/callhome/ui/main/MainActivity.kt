@@ -24,6 +24,7 @@ import com.adi_random.callhome.worker.CallHistoryWatchWorker
 import java.util.concurrent.TimeUnit
 
 const val ERROR_NOTIFICATION_CHANNEL = "error_notification-channel"
+const val REMINDERS_NOTIFICATION_CHANNEL = "reminder_notification_channel"
 
 class MainActivity : AppCompatActivity() {
 
@@ -115,23 +116,43 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.error_notification_channel_name)
-            val descriptionText = getString(R.string.error_notification_channel_description)
+
+//            The error channel
+
+            val errorName = getString(R.string.error_notification_channel_name)
+            val errorDescriptionText = getString(R.string.error_notification_channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(ERROR_NOTIFICATION_CHANNEL, name, importance).apply {
-                description = descriptionText
-            }
+            val errorChannel =
+                NotificationChannel(ERROR_NOTIFICATION_CHANNEL, errorName, importance).apply {
+                    description = errorDescriptionText
+                }
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(errorChannel)
+
+
+            // The reminder channel
+            val reminderName = getString(R.string.reminder_notification_channel_name)
+            val reminderDescription = getString(R.string.reminder_notification_channel_description)
+            val reminderChannel = NotificationChannel(
+                REMINDERS_NOTIFICATION_CHANNEL,
+                reminderName,
+                importance
+            ).apply {
+                description = reminderDescription
+            }
+
+            //Register the channel
+            notificationManager.createNotificationChannel(reminderChannel)
+
         }
     }
 
     private fun registerWorker() {
         //Register worker
         val workRequest =
-            PeriodicWorkRequestBuilder<CallHistoryWatchWorker>(15, TimeUnit.MINUTES).build()
+            PeriodicWorkRequestBuilder<CallHistoryWatchWorker>(30, TimeUnit.MINUTES).build()
         WorkManager.getInstance(this).enqueue(workRequest)
     }
 

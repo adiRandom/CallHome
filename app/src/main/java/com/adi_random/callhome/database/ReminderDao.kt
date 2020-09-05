@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.adi_random.callhome.database.models.ReminderAndRemindTime
 import com.adi_random.callhome.model.Reminder
+import java.util.*
 
 
 /**
@@ -35,5 +36,9 @@ interface ReminderDao {
 
     @Delete
     fun deleteReminder(reminder: Reminder)
+
+    //    Update the date the last reminder call was made
+    @Query("UPDATE Reminder SET lastCallDate = :date WHERE reminderId = :reminderId")
+    fun callMade(reminderId: Long, date: Date)
 
 }
