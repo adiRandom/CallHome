@@ -48,6 +48,12 @@ class ReminderBuilder(
 
     suspend fun build(): Reminder? {
         val remindTimes = timesToRemind.map { RemindTime(it, type, reminderId = id) }
+
+//        Build the cron instances
+        remindTimes.forEach {
+            it.buildCron(context)
+        }
+
         val contentRetriever = ContentRetriever(context, dispatcher)
         return try {
             val lastCallDate = contentRetriever.getLastCallDate(contact)
