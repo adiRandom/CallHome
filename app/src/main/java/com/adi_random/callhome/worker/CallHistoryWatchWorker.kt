@@ -70,8 +70,7 @@ class CallHistoryWatchWorker(
         for (reminder in reminders) {
             GlobalScope.launch(dispatcher) {
 //                    Check the error count
-//                TODO: Remove the test id
-                if (reminder.errorCount < 5 || reminder.reminderId == 2087592708816916333) {
+                if (reminder.errorCount >= 5) {
 // Notify user to delete reminder
 
                     val intent = Intent(appCtx, MainActivity::class.java).apply {
@@ -155,6 +154,8 @@ class CallHistoryWatchWorker(
                                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                         .setGroup(notificationGroup)
                                         .setContentIntent(pendingIntent)
+                                        .setAutoCancel(true)
+
                                     with(NotificationManagerCompat.from(applicationContext)) {
                                         notify(Random().nextInt(), notificationBuilder.build())
                                     }
@@ -181,6 +182,8 @@ class CallHistoryWatchWorker(
                                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                         .setGroup(notificationGroup)
                                         .setContentIntent(pendingIntent)
+                                        .setAutoCancel(true)
+
                                     with(NotificationManagerCompat.from(applicationContext)) {
                                         notify(Random().nextInt(), notificationBuilder.build())
                                     }
