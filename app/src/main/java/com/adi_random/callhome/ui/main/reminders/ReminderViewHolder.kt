@@ -1,6 +1,7 @@
 package com.adi_random.callhome.ui.main.reminders
 
 import android.graphics.Bitmap
+import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +12,9 @@ import com.adi_random.callhome.R
 import com.adi_random.callhome.databinding.ReminderItemBinding
 import com.adi_random.callhome.model.Reminder
 import com.adi_random.callhome.ui.main.addreminder.ReminderType
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -22,6 +26,25 @@ class ReminderViewHolder(val binding: ReminderItemBinding) : RecyclerView.ViewHo
 
     fun bind(reminder: Reminder?, delete: () -> Unit) {
         binding.model = ReminderViewModel(reminder, delete)
+        if (reminder?.hasError == true) {
+//            Animate the background
+
+            binding.reminderItemRoot.setBackgroundResource(R.drawable.error_light_transition)
+            GlobalScope.launch {
+                val animationDuration = 300
+                (binding.reminderItemRoot.background as TransitionDrawable).apply {
+                    delay(500)
+                    startTransition(animationDuration)
+                    delay(animationDuration.toLong())
+                    reverseTransition(animationDuration)
+                }
+                delay(300)
+                //Reset the background
+
+                binding.reminderItemRoot.setBackgroundResource(R.drawable.reminder_ripple_background)
+            }
+        }
+        binding.executePendingBindings()
 
     }
 

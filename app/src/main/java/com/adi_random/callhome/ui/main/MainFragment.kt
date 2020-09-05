@@ -16,7 +16,6 @@ import com.adi_random.callhome.databinding.MainFragmentBinding
 import com.adi_random.callhome.ui.main.addreminder.AddReminderErrorDialog
 import com.adi_random.callhome.ui.main.addreminder.AddReminderFragment
 import com.adi_random.callhome.ui.main.addreminder.AddReminderViewModel
-import com.adi_random.callhome.ui.main.reminders.ErrorReminderItemAnimator
 import com.adi_random.callhome.ui.main.reminders.ItemDetailsLookupImpl
 import com.adi_random.callhome.ui.main.reminders.ReminderAdapter
 import com.adi_random.callhome.ui.main.utils.ReminderTimesDialog
@@ -98,7 +97,6 @@ class MainFragment : Fragment() {
         binding.reminders.apply {
             adapter = reminderAdapter
             this.layoutManager = layoutManager
-            itemAnimator = ErrorReminderItemAnimator()
         }
 
 

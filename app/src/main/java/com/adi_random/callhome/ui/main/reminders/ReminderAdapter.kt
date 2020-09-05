@@ -30,7 +30,7 @@ class ReminderAdapter(
             delete(position)
         }
         if (reminder.hasError) {
-//            reminder.hasError = false
+            reminder.hasError = false
         }
     }
 

@@ -12,11 +12,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="?attr/selectableItemBackground"
-        android:backgroundTint="@android:color/holo_blue_bright"
-        android:clickable="true"
+        android:id="@+id/reminder_item_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background='@drawable/reminder_ripple_background'
+        android:clickable="true"
         android:paddingLeft="4dp">
 
         <androidx.cardview.widget.CardView
