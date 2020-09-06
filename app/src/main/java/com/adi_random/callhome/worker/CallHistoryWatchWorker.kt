@@ -80,8 +80,7 @@ class CallHistoryWatchWorker(
 
                     val notificationBuilder =
                         NotificationCompat.Builder(appCtx, ERROR_NOTIFICATION_CHANNEL)
-//                                TODO: Change icon
-                            .setSmallIcon(R.drawable.ic_baseline_contacts_24)
+                            .setSmallIcon(R.drawable.ic_callhome)
                             .setContentTitle("Reminder error")
                             .setContentText("There seems to be an error with one of your reminders")
                             .setStyle(
@@ -148,7 +147,7 @@ class CallHistoryWatchWorker(
                                         applicationContext,
                                         REMINDERS_NOTIFICATION_CHANNEL
                                     )
-                                        .setSmallIcon(R.drawable.ic_baseline_contacts_24)
+                                        .setSmallIcon(R.drawable.ic_callhome)
                                         .setContentTitle("Make a call")
                                         .setContentText("It's time to call ${reminder.contact.name}")
                                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -176,7 +175,7 @@ class CallHistoryWatchWorker(
                                         applicationContext,
                                         REMINDERS_NOTIFICATION_CHANNEL
                                     )
-                                        .setSmallIcon(R.drawable.ic_baseline_contacts_24)
+                                        .setSmallIcon(R.drawable.ic_callhome)
                                         .setContentTitle("Make a call")
                                         .setContentText("You missed your last call to ${reminder.contact.name}")
                                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
